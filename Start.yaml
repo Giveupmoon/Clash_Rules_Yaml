@@ -47,7 +47,7 @@ authentication:                 # 身份验证
 find-process-mode: off          # 进程匹配
 mode: rule                      # 运行模式
 log-level: warning              # 日志等级
-ipv6: true                      # IPV6支持
+ipv6: false                     # IPV6支持
 profile:                        # 持久化设置
   store-selected: true          # 面板策略组持久化
   store-fake-ip: true           # Fake-ip持久化
@@ -128,7 +128,7 @@ tun:
 # =========================================
 dns:
   enable: true                  # 启用 DNS 功能 
-  ipv6: true                    # 支持 IPv6
+  ipv6: false                   # 支持 IPv6
   enhanced-mode: fake-ip        # 启用 Fake-IP
   fake-ip-range: 198.18.0.1/16  # IPv4 Fake-IP 范围
   fake-ip-range6: fdfe:dcba:9876::1/64  # IPv6 Fake-IP 范围
