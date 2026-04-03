@@ -6,6 +6,8 @@ anchor:
   ip: &ip {type: http, interval: 86400, behavior: ipcidr, format: mrs}
   domain: &domain {type: http, interval: 86400, behavior: domain, format: mrs}
   class: &class {type: http, interval: 86400, behavior: classical, format: text}
+  class-yaml: &class-yaml {type: http, interval: 86400, behavior: classical, format: yaml}
+
   # 策略组锚点
   Strategy-Group:  &sg {type: select, proxies: [香港节点, 美国节点, 日本节点, 新加坡节点, 台湾节点, 自动选择,全球直连]}
 
@@ -238,8 +240,8 @@ rules:
 #            规则提供者
 # =========================================
 rule-providers: 
-  giveup_direct: { <<: *class, url: "https://raw.githubusercontent.com/Giveupmoon/Clash_Rules_Yaml/refs/heads/main/Rules/Giveup_Direct.list"}
-  giveup_proxy: { <<: *class, url: "https://raw.githubusercontent.com/Giveupmoon/Clash_Rules_Yaml/refs/heads/main/Rules/Giveup_Proxy.list"}
+  giveup_direct: { <<: *class-yaml, url: "https://raw.githubusercontent.com/Giveupmoon/Clash_Rules_Yaml/refs/heads/main/Rules/Giveup_Direct.yaml"}
+  giveup_proxy: { <<: *class-yaml, url: "https://raw.githubusercontent.com/Giveupmoon/Clash_Rules_Yaml/refs/heads/main/Rules/Giveup_Proxy.yaml"}
   private: { <<: *domain, url: "https://raw.githubusercontent.com/MetaCubeX/meta-rules-dat/meta/geo/geosite/private.mrs"}
   private_IP: {<<: *ip, url: "https://raw.githubusercontent.com/MetaCubeX/meta-rules-dat/meta/geo/geoip/private.mrs"}
   Custom_Direct_Domain: { <<: *domain, url: "https://raw.githubusercontent.com/Aethersailor/Custom_OpenClash_Rules/main/rule/Custom_Direct_Domain.mrs"}
