@@ -120,7 +120,6 @@ tun:
   auto-redirect: true           # 自动重定向流量到 TUN
   endpoint-independent-nat: true  # 启用端点独立 NAT，保证 UDP 稳定性
   strict-route: true            # 严格路由模式，强制匹配规则走指定出口
-  
 
 # =========================================
 #                 DNS 配置
