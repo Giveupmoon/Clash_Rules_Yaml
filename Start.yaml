@@ -131,7 +131,6 @@ dns:
   ipv6: false                   # 支持 IPv6
   enhanced-mode: fake-ip        # 启用 Fake-IP
   fake-ip-range: 198.18.0.1/16  # IPv4 Fake-IP 范围
-  fake-ip-range6: fdfe:dcba:9876::1/64  # IPv6 Fake-IP 范围
   listen: 0.0.0.0:1053          # DNS 监听地址和端口
   respect-rules: false          # 是否遵循DNS规则
   fake-ip-filter-mode: blacklist  # Fake-IP 黑名单
@@ -144,8 +143,6 @@ dns:
   fake-ip-filter:               # fake-ip 黑名单列表 (列表内的域名解析将返回真实ip)
     - "*.lan"
     - "*.local"
-    - "*.home"
-    - "*.arpa"
     - "geosite:cn"
 
 # =========================================
