@@ -119,8 +119,10 @@ tun:
   auto-route: true              # 自动添加路由表
   auto-detect-interface: true   # 自动检测网络接口，绑定 TUN
   auto-redirect: true           # 自动重定向流量到 TUN
+  route-exclude-address: [RULE-SET,giveup_bypass_ip]  # 局域网绕过内核列表
   endpoint-independent-nat: true  # 启用端点独立 NAT，保证 UDP 稳定性
   strict-route: true            # 严格路由模式，强制匹配规则走指定出口
+  
 
 # =========================================
 #                 DNS 配置
@@ -190,6 +192,8 @@ proxy-groups:
 rules:
   - RULE-SET,private,全球直连
   - RULE-SET,private_IP,全球直连,no-resolve
+  - RULE-SET,giveup_direct,全球直连
+  - RULE-SET,giveup_proxy,👆🏻 手动选择
   - RULE-SET,Custom_Direct_Domain,全球直连
   - RULE-SET,Custom_Direct_IP,全球直连,no-resolve
   - RULE-SET,Custom_Proxy_Domain,👆🏻 手动选择
@@ -237,6 +241,9 @@ rules:
 #            规则提供者
 # =========================================
 rule-providers: 
+  giveup_direct: { <<: *class-yaml, url: "https://raw.githubusercontent.com/Giveupmoon/Clash_Rules_Yaml/refs/heads/main/Rules/Giveup_Direct.list"}
+  giveup_proxy: { <<: *class-yaml, url: "https://raw.githubusercontent.com/Giveupmoon/Clash_Rules_Yaml/refs/heads/main/Rules/Giveup_Proxy.list"}
+  giveup_bypass_ip: { <<: *class, url: "https://raw.githubusercontent.com/Giveupmoon/Clash_Rules_Yaml/refs/heads/main/Rules/Giveup_Bypass_ip.list"}
   private: { <<: *domain, url: "https://raw.githubusercontent.com/MetaCubeX/meta-rules-dat/meta/geo/geosite/private.mrs"}
   private_IP: {<<: *ip, url: "https://raw.githubusercontent.com/MetaCubeX/meta-rules-dat/meta/geo/geoip/private.mrs"}
   Custom_Direct_Domain: { <<: *domain, url: "https://raw.githubusercontent.com/Aethersailor/Custom_OpenClash_Rules/main/rule/Custom_Direct_Domain.mrs"}
