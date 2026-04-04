@@ -128,9 +128,11 @@ tun:
 # =========================================
 dns:
   enable: true                  # 启用 DNS 功能 
-  ipv6: false                   # 支持 IPv6
+  ipv6: true                   # 支持 IPv6
   enhanced-mode: fake-ip        # 启用 Fake-IP
-  fake-ip-range: 198.18.0.1/16  # IPv4 Fake-IP 范围
+  fake-ip-range: 198.18.0.1/16  # IPv4 Fake-IP 网段
+  fake-ip-range6: fdfe:dcba:9876::1/64  #IPv4 Fake-IP 网段
+
   listen: 0.0.0.0:1053          # DNS 监听地址和端口
   respect-rules: false          # 是否遵循DNS规则
   fake-ip-filter-mode: blacklist  # Fake-IP 黑名单
