@@ -47,7 +47,7 @@ authentication:                 # 身份验证
 find-process-mode: off          # 进程匹配
 mode: rule                      # 运行模式
 log-level: warning              # 日志等级
-ipv6: false                     # IPV6支持
+ipv6: true                     # IPV6支持
 profile:                        # 持久化设置
   store-selected: true          # 面板策略组持久化
   store-fake-ip: true           # Fake-ip持久化
@@ -143,6 +143,8 @@ dns:
   fake-ip-filter:               # fake-ip 黑名单列表 (列表内的域名解析将返回真实ip)
     - "*.lan"
     - "*.local"
+    - "*.home"
+    - "*.arpa"
     - "geosite:cn"
 
 # =========================================
