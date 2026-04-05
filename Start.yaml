@@ -153,7 +153,7 @@ dns:
 #             策略组配置
 # =========================================
 proxy-groups:
-  - {name: 👆🏻 手动选择, <<: *sg, use: [Sub-store]}
+  - {name: 👆🏻 手动选择, type: select, proxies: [香港节点, 美国节点, 日本节点, 新加坡节点, 台湾节点, 自动选择, 全球直连], use: [Sub-store]}
   - {name: 自动选择, icon: "https://raw.githubusercontent.com/Vbaethon/HOMOMIX/main/Icon/Color/Large/Flight.png", type: url-test, include-all: true, tolerance: 20, interval: 300, filter: "^((?!(直连)).)*$"}
   - {name: 即时通讯, icon: "https://raw.githubusercontent.com/Vbaethon/HOMOMIX/main/Icon/Color/Large/Telegram.png", <<: *sg}
   - {name: 社交媒体, icon: "https://raw.githubusercontent.com/Vbaethon/HOMOMIX/main/Icon/Color/Large/Twitter.png", <<: *sg}
