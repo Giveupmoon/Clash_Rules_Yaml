@@ -9,7 +9,7 @@ anchor:
   class-yaml: &class-yaml {type: http, interval: 86400, behavior: classical, format: yaml}
 
   # 策略组锚点
-  Strategy-Group:  &sg {type: select, proxies: [香港节点, 美国节点, 日本节点, 新加坡节点, 台湾节点, 自动选择,全球直连]}
+  Strategy-Group:  &sg {type: select, proxies: [香港节点, 美国节点, 日本节点, 新加坡节点, 台湾节点, 👆🏻 手动选择, 自动选择, 全球直连]}
 
 # =========================================
 #              代理提供商
