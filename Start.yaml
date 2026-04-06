@@ -47,12 +47,14 @@ authentication:                 # 身份验证
 find-process-mode: off          # 进程匹配
 mode: rule                      # 运行模式
 log-level: warning              # 日志等级
-ipv6: true                     # IPV6支持
+ipv6: true                      # IPV6支持
 profile:                        # 持久化设置
   store-selected: true          # 面板策略组持久化
   store-fake-ip: true           # Fake-ip持久化
 tcp-concurrent: true            # TCP并发
 unified-delay: true             # 统一延迟
+keep-alive-interval: 15         # TCP 保活间隔
+keep-alive-idle: 600            # TCP 空闲等待 
 
 # =========================================
 #                 面板配置
