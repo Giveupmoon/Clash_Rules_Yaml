@@ -1,0 +1,50 @@
+name: Aggregate Icons
+
+on:
+  schedule:
+    - cron: "0 * * * *"   # 每小时执行
+  workflow_dispatch:
+  push:
+    paths-ignore:
+      - "icon/**"
+
+jobs:
+  sync:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout current repo
+        uses: actions/checkout@v4
+
+      - name: Prepare icon directory
+        run: |
+          rm -rf icon
+          mkdir -p icon
+
+      - name: Clone repositories
+        run: |
+          git clone --depth=1 https://github.com/user1/repo1.git repo1
+          git clone --depth=1 https://github.com/user2/repo2.git repo2
+
+      - name: Sync icons (separate dirs)
+        run: |
+          rsync -av repo1/icons/ icon/repo1/
+          rsync -av repo2/assets/icon/ icon/repo2/
+
+      - name: Check for changes
+        id: diff
+        run: |
+          if git diff --quiet; then
+            echo "changed=false" >> $GITHUB_OUTPUT
+          else
+            echo "changed=true" >> $GITHUB_OUTPUT
+          fi
+
+      - name: Commit & Push
+        if: steps.diff.outputs.changed == 'true'
+        run: |
+          git config user.name "github-actions"
+          git config user.email "github-actions@github.com"
+          git add icon
+          git commit -m "sync: aggregate icons"
+          git push
