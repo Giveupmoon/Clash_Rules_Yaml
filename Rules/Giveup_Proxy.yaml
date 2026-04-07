@@ -1,5 +1,4 @@
 payload:
-  - DOMAIN-SUFFIX,immortalwrt.org
 ##- DOMAIN-SUFFIX,google.com  #匹配域名后缀
 ##- DOMAIN-KEYWORD,google #匹配域名关键字
 ##- DOMAIN,google.com #匹配域名
