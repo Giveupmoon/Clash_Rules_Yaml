@@ -6,7 +6,7 @@ on:
   workflow_dispatch:
   push:
     paths-ignore:
-      - "icon/**"
+      - "ICON/**"
 
 jobs:
   sync:
@@ -23,13 +23,13 @@ jobs:
 
       - name: Clone repositories
         run: |
-          git clone --depth=1 https://github.com/user1/repo1.git repo1
-          git clone --depth=1 https://github.com/user2/repo2.git repo2
+          git clone --depth=1 https://github.com/Vbaethon/HOMOMIX.git HOMOMIX
+          git clone --depth=1 https://github.com/luestr/IconResource.git IconResource
 
       - name: Sync icons (separate dirs)
         run: |
-          rsync -av repo1/icons/ icon/repo1/
-          rsync -av repo2/assets/icon/ icon/repo2/
+          rsync -av HOMOMIX/Icon/Color Icon/HOMOMIX
+          rsync -av IconResource Icon/IconResource
 
       - name: Check for changes
         id: diff
