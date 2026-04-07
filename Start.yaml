@@ -115,7 +115,7 @@ sniffer:
 tun:
   enable: true                  # 启用 TUN 功能，用于透明代理
   stack: mixed                  # 使用混合协议栈（支持 TCP + UDP）
-  device: nikki                 # TUN 虚拟网卡名称，可自定义
+  device: mihome                # TUN 虚拟网卡名称，可自定义
   dns-hijack:                   # DNS 劫持设置
     - "any:53"
     - "tcp://any:53"            
