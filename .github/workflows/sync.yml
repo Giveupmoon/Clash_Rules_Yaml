@@ -18,8 +18,8 @@ jobs:
 
       - name: Prepare icon directory
         run: |
-          rm -rf icon
-          mkdir -p icon
+          rm -rf Icon
+          mkdir -p Icon
 
       - name: Clone repositories
         run: |
