@@ -146,6 +146,7 @@ dns:
     - "*.local"
     - "*.home"
     - "*.arpa"
+    - "RULE-SET,private"
     - "geosite:cn"
 
 # =========================================
