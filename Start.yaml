@@ -32,7 +32,7 @@ anchor:
 # =========================================
 proxy-providers:
   # 机场节点集合，使用时请修改
-  Sub-store: {<<: *BaseProvider, url: 'url', override: {skip-cert-verify: true, udp: true}}
+  Sub-store: {<<: *BaseProvider, url: '订阅链接请复制通用订阅', override: {skip-cert-verify: true, udp: true}}
 
 # =========================================
 #                 外部访问配置
