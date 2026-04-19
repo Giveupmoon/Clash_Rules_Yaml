@@ -5,8 +5,8 @@
 ├── README.md              ← 项目说明（这个文件）
 ├── Start.yaml             ← 核心配置样例，可直接用于 Clash
 └── Rules/                 ← 规则提供者（Rule‑Set）各类规则文件
-    ├── Giveup_Direct.yaml
-    ├── Giveup_Proxy.yaml
+    ├── Giveup_Direct.list
+    ├── Giveup_Proxy.list
     └── …
 ```
 
