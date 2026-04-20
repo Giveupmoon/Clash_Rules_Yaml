@@ -168,7 +168,7 @@ proxy-groups:
   - {name: 社交媒体,        icon: "https://raw.githubusercontent.com//Giveupmoon/Clash_Rules_Yaml/main/Icon/HOMOMIX/Color/Large/Twitter.png",               <<: *SelectHK}
   - {name: GitHub,         icon: "https://raw.githubusercontent.com//Giveupmoon/Clash_Rules_Yaml/main/Icon/HOMOMIX/Color/Large/GitHub.png",                <<: *SelectHK}
   - {name: ChatGPT,        icon: "https://raw.githubusercontent.com//Giveupmoon/Clash_Rules_Yaml/main/Icon/HOMOMIX/Color/Large/ChatGPT.png",               <<: *SelectUS}
-  - {name: Gemini,        icon: "https://raw.githubusercontent.com//Giveupmoon/Clash_Rules_Yaml/main/Icon/IconResource/App_icon/1024px/GoogleGemini.png",  <<: *SelectUS}
+  - {name: Gemini,        icon: "https://raw.githubusercontent.com//Giveupmoon/Clash_Rules_Yaml/main/Icon/IconResource/App_icon/1024px/GoogleGemini.png",  <<: *SelectHK}
   - {name: AI服务,         icon: "https://raw.githubusercontent.com//Giveupmoon/Clash_Rules_Yaml/main/Icon/HOMOMIX/Color/Large/AI_bot.png",                <<: *SelectUS}
   - {name: TikTok,         icon: "https://raw.githubusercontent.com//Giveupmoon/Clash_Rules_Yaml/main/Icon/HOMOMIX/Color/Large/TikTok.png",                <<: *SelectUS}
   - {name: AppleTV+,       icon: "https://raw.githubusercontent.com//Giveupmoon/Clash_Rules_Yaml/main/Icon/HOMOMIX/Color/Large/Apple_TV.png",              <<: *SelectHK}
