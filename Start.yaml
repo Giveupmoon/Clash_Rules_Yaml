@@ -162,7 +162,6 @@ dns:
 #             策略组配置
 # =========================================
 proxy-groups:
-  - {name: 手动选择,        <<: *SelectDF,        use: [Sub-store],        icon: "https://raw.githubusercontent.com//Giveupmoon/Clash_Rules_Yaml/main/Icon/11111.png"}
   - {name: 自动选择,        <<: *SelectAU,                                 icon: "https://raw.githubusercontent.com//Giveupmoon/Clash_Rules_Yaml/main/Icon/HOMOMIX/Color/Large/Flight.png"}
   - {name: 即时通讯,        <<: *SelectHK,                                 icon: "https://raw.githubusercontent.com//Giveupmoon/Clash_Rules_Yaml/main/Icon/HOMOMIX/Color/Large/Telegram.png"}
   - {name: 社交媒体,        <<: *SelectHK,                                 icon: "https://raw.githubusercontent.com//Giveupmoon/Clash_Rules_Yaml/main/Icon/HOMOMIX/Color/Large/Twitter.png"}
@@ -189,6 +188,7 @@ proxy-groups:
   - {name: Steam,          <<: *SelectHK,                                 icon: "https://raw.githubusercontent.com//Giveupmoon/Clash_Rules_Yaml/main/Icon/HOMOMIX/Color/Large/Steam.png"}
   - {name: 测速工具,        <<: *SelectHK,                                 icon: "https://raw.githubusercontent.com//Giveupmoon/Clash_Rules_Yaml/main/Icon/HOMOMIX/Color/Large/SpeedTest.png"}
   - {name: 漏网之鱼,        <<: *SelectHK,        use: [Sub-store],        icon: "https://raw.githubusercontent.com//Giveupmoon/Clash_Rules_Yaml/main/Icon/match.png"}
+  - {name: 手动选择,        <<: *SelectDF,        use: [Sub-store],        icon: "https://raw.githubusercontent.com//Giveupmoon/Clash_Rules_Yaml/main/Icon/11111.png"}
   - {name: 全球直连,        type: url-test,       proxies: [DIRECT],       icon: "https://raw.githubusercontent.com//Giveupmoon/Clash_Rules_Yaml/main/Icon/HOMOMIX/Color/Large/DIRECT.png"}
   - {name: 香港节点,        <<: *BaseURL-test,    filter: *FilterHK,       icon: "https://raw.githubusercontent.com//Giveupmoon/Clash_Rules_Yaml/main/Icon/HOMOMIX/Color/Large/Hong_Kong.png"}
   - {name: 美国节点,        <<: *BaseURL-test,    filter: *FilterUS,       icon: "https://raw.githubusercontent.com//Giveupmoon/Clash_Rules_Yaml/main/Icon/HOMOMIX/Color/Large/USA.png"}
