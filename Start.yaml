@@ -84,40 +84,6 @@ geo-auto-update:                    true                                        
 geo-update-interval:                24                                                                          # 间隔一天（24小时）
 
 # =========================================
-#                嗅探配置
-# =========================================
-sniffer:
-  enable: true
-  override-destination: true
-  sniff:
-    QUIC:
-      ports:
-      - 443
-    TLS:
-      ports:
-      - 443
-      - 8443
-    HTTP:
-      ports:
-      - 80
-      - 8080-8880
-      override-destination: true
-  force-domain:
-  - "+.netflix.com"
-  - "+.nflxvideo.net"
-  - "+.amazonaws.com"
-  - "+.media.dssott.com"
-  skip-domain:
-  - "+.apple.com"
-  - Mijia Cloud
-  - dlg.io.mi.com
-  - "+.oray.com"
-  - "+.sunlogin.net"
-  - "+.push.apple.com"
-  parse-pure-ip: true
-  force-dns-mapping: true
-
-# =========================================
 #             TUN入站配置
 # =========================================
 tun:
@@ -158,23 +124,7 @@ dns:
     - "*.home"
     - "*.arpa"
     # 规则类
-    - rule-set:cn
     - rule-set:private
-    - rule-set:category-public-tracker
-    # 自定义地址
-    - "checkip.dyndns.org"
-    - "connectivitycheck.gstatic.com"
-    - "+.push.apple.com"
-    - "time.nist.gov"
-    - "time.windows.com"
-    - "+.battlenet.com"
-    - "+.blzstatic.cn"
-    - "+.nintendo.net"
-    - "+.xboxlive.com"
-    - "+.stun.playstation.net"
-    - "+.docker.io"
-    - "+.miwifi.com"
-    - "+.stun.*"
 
 # =========================================
 #             策略组配置
