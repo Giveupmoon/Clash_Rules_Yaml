@@ -94,10 +94,8 @@ tun:
     - "any:53"
     - "tcp://any:53"            
   auto-route:                       true                                                                        # 自动添加路由表
-  auto-detect-interface:            true                                                                        # 自动检测网络接口，绑定 TUN
   auto-redirect:                    true                                                                        # 自动重定向流量到 TUN
-  endpoint-independent-nat:         true                                                                        # 启用端点独立 NAT，保证 UDP 稳定性
-  strict-route:                     true                                                                        # 严格路由模式，强制匹配规则走指定出口
+  endpoint-independent-nat:         false                                                                       # 独立于端点的 NAT
 
 # =========================================
 #                 DNS 配置
@@ -107,16 +105,11 @@ dns:
   ipv6:                             true                                                                        # 支持 IPv6
   enhanced-mode:                    fake-ip                                                                     # 启用 Fake-IP
   fake-ip-range:                    198.18.0.1/16                                                               # IPv4 Fake-IP 网段
-  fake-ip-range6:                   fdfe:dcba:9876::1/64                                                        #IPv4 Fake-IP 网段
   listen:                           0.0.0.0:1053                                                                # DNS 监听地址和端口
   respect-rules:                    false                                                                       # 是否遵循DNS规则
   fake-ip-filter-mode:              blacklist                                                                   # Fake-IP 黑名单
   nameserver:                                                                                                   # DNS 上游服务器（用于国内域名解析）
-    - https://doh.pub/dns-query
-    - https://dns.alidns.com/dns-query
-  default-nameserver:                                                                                           # 默认DNS服务器 （用于解析上游Doh和兜底解析）
-    - https://223.5.5.5/dns-query
-    - tls://1.1.1.1:853
+    - system
   fake-ip-filter:  
     # 内网地址                                                                                             # fake-ip 黑名单列表 (列表内的域名解析将返回真实ip)
     - "*.lan"
