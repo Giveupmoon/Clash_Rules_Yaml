@@ -151,13 +151,30 @@ dns:
   default-nameserver:                                                                                           # 默认DNS服务器 （用于解析上游Doh和兜底解析）
     - https://223.5.5.5/dns-query
     - tls://1.1.1.1:853
-  fake-ip-filter:                                                                                               # fake-ip 黑名单列表 (列表内的域名解析将返回真实ip)
+  fake-ip-filter:  
+    # 内网地址                                                                                             # fake-ip 黑名单列表 (列表内的域名解析将返回真实ip)
     - "*.lan"
     - "*.local"
     - "*.home"
     - "*.arpa"
-    - "RULE-SET,private"
-    - "geosite:cn"
+    # 规则类
+    - rule-set:cn
+    - rule-set:private
+    - rule-set:category-public-tracker
+    # 自定义地址
+    - "checkip.dyndns.org"
+    - "connectivitycheck.gstatic.com"
+    - "+.push.apple.com"
+    - "time.nist.gov"
+    - "time.windows.com"
+    - "+.battlenet.com"
+    - "+.blzstatic.cn"
+    - "+.nintendo.net"
+    - "+.xboxlive.com"
+    - "+.stun.playstation.net"
+    - "+.docker.io"
+    - "+.miwifi.com"
+    - "+.stun.*"
 
 # =========================================
 #             策略组配置
