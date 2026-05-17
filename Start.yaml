@@ -47,7 +47,7 @@ tproxy-port:                        7894                                        
 allow-lan:                          true                                                                        # 允许局域网访问
 bind-address:                       "*"                                                                         # 监听所有网卡
 authentication:                                                                                                 # 身份验证
-  - "mihome:mihome666"
+  - "mihomo:mihomo666"
 
 # =========================================
 #                 内核运行配置
@@ -89,13 +89,13 @@ geo-update-interval:                24                                          
 tun:
   enable:                           true                                                                        # 启用 TUN 功能，用于透明代理
   stack:                            mixed                                                                       # 使用混合协议栈（支持 TCP + UDP）
-  device:                           mihome                                                                      # TUN 虚拟网卡名称，可自定义
+  device:                           mihomo                                                                      # TUN 虚拟网卡名称，可自定义
   dns-hijack:                                                                                                   # DNS 劫持设置
-    - "any:53"
-    - "tcp://any:53"            
+    - 0.0.0.0:53
   auto-route:                       true                                                                        # 自动添加路由表
+  auto-detect-interface:            true                                                                        # 自动检测网络接口，绑定 TUN
   auto-redirect:                    true                                                                        # 自动重定向流量到 TUN
-  endpoint-independent-nat:         false                                                                       # 独立于端点的 NAT
+  endpoint-independent-nat:         true                                                                        # 启用端点独立 NAT，保证 UDP 稳定性
 
 # =========================================
 #                 DNS 配置
@@ -105,19 +105,23 @@ dns:
   ipv6:                             true                                                                        # 支持 IPv6
   enhanced-mode:                    fake-ip                                                                     # 启用 Fake-IP
   fake-ip-range:                    198.18.0.1/16                                                               # IPv4 Fake-IP 网段
+  fake-ip-range6:                   fdfe:dcba:9876::1/64                                                        #IPv4 Fake-IP 网段
   listen:                           0.0.0.0:1053                                                                # DNS 监听地址和端口
   respect-rules:                    false                                                                       # 是否遵循DNS规则
   fake-ip-filter-mode:              blacklist                                                                   # Fake-IP 黑名单
   nameserver:                                                                                                   # DNS 上游服务器（用于国内域名解析）
-    - system
-  fake-ip-filter:  
-    # 内网地址                                                                                             # fake-ip 黑名单列表 (列表内的域名解析将返回真实ip)
+    - https://doh.pub/dns-query
+    - https://dns.alidns.com/dns-query
+  default-nameserver:                                                                                           # 默认DNS服务器 （用于解析上游Doh和兜底解析）
+    - https://223.5.5.5/dns-query
+    - tls://1.1.1.1:853
+  fake-ip-filter:                                                                                               # fake-ip 黑名单列表 (列表内的域名解析将返回真实ip)
     - "*.lan"
     - "*.local"
     - "*.home"
     - "*.arpa"
-    # 规则类
-    - rule-set:private
+    - rule-set,cn
+    - rule-set,private
 
 # =========================================
 #             策略组配置
