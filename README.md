@@ -3,7 +3,8 @@
 ```
 .
 ├── README.md              ← 项目说明（这个文件）
-├── Start.yaml             ← 核心配置样例，可直接用于 Clash
+├── Start-nikki.yaml       ← 核心配置，可用于nikki启动 直接使用运营商上游DNS
+├── Start.yaml             ← 核心配置样例，可直接用于 mihome内核启动
 └── Rules/                 ← 规则提供者（Rule‑Set）各类规则文件
     ├── Giveup_Direct.list
     ├── Giveup_Proxy.list
