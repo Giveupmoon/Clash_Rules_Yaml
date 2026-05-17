@@ -34,7 +34,7 @@ anchor:
 # =========================================
 proxy-providers:
   # 机场节点集合，使用时请修改
-  Sub-store: {<<: *BaseProvider, url: '订阅链接请复制通用订阅'}
+  Sub-store: {<<: *BaseProvider, url: '订阅链接请复制通用订阅', path: ./provider/sub-store.yaml}
 
 # =========================================
 #                 外部访问配置
@@ -52,7 +52,7 @@ authentication:                                                                 
 # =========================================
 #                 内核运行配置
 # =========================================
-find-process-mode:                  off                                                                         # 进程匹配
+find-process-mode:                  strict                                                                      # 进程匹配
 mode:                               rule                                                                        # 运行模式
 log-level:                          warning                                                                     # 日志等级
 ipv6:                               true                                                                        # IPV6支持
@@ -80,6 +80,7 @@ geox-url:
   geoip: "https://raw.githubusercontent.com/MetaCubeX/meta-rules-dat/release/geoip.dat"
   geosite: "https://raw.githubusercontent.com/MetaCubeX/meta-rules-dat/release/geosite.dat"
   mmdb: "https://raw.githubusercontent.com/MetaCubeX/meta-rules-dat/release/geoip.metadb"
+geodata-loader: standard                                                                                        # GEO加载模式
 geo-auto-update:                    true                                                                        # 自动更新   
 geo-update-interval:                24                                                                          # 间隔一天（24小时）
 
