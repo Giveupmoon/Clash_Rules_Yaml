@@ -3,12 +3,13 @@
 ```
 .
 ├── README.md              ← 项目说明（这个文件）
-├── Start-nikki.yaml       ← 核心配置，可用于nikki启动 直接使用运营商上游DNS
-├── Start.yaml             ← 核心配置样例，可直接用于 mihome内核启动
+├── xxxxx.yaml             ← 核心配置样例，可直接用于 mihome内核启动
 └── Rules/                 ← 规则提供者（Rule‑Set）各类规则文件
     ├── Giveup_Direct.list
     ├── Giveup_Proxy.list
     └── …
+配置文件 后缀nikki 表示dns直接引用系统dns 及运营商上游dns
+配置文件 后缀json 仅区别于写法不同 内容完全一致
 ```
 
 ---
