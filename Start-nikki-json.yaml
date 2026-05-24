@@ -15,7 +15,7 @@ anchor:
   FilterTW: &FilterTW '^(?=.*(?i)(台|🇼🇸|🇹🇼|TW|tai|TPE|TSA|KHH)).*$'
 
   # 策略组代理列表模板 - 预定义的代理节点优先级排序
-  SelectAU: &SelectAU {type: url-test, include-all: true, tolerance: 20, interval: 120, filter: "^((?!(直连)).)*$"}
+  SelectAU: &SelectAU {type: url-test, include-all: true, tolerance: 20, interval: 120, url: https://cp.cloudflare.com/generate_204, filter: "^((?!(直连)).)*$"}
   SelectMS: &SelectMS {type: select, proxies: [香港节点, 美国节点, 日本节点, 新加坡节点, 台湾节点, 自动选择, 全球直连], use: [Sub-store]}
   SelectMH: &SelectMH {type: select, proxies: [香港节点, 美国节点, 新加坡节点, 日本节点, 台湾节点, 手动选择, 自动选择, 全球直连], use: [Sub-store]}
   SelectHK: &SelectHK {type: select, proxies: [香港节点, 美国节点, 新加坡节点, 日本节点, 台湾节点, 手动选择, 自动选择, 全球直连]}

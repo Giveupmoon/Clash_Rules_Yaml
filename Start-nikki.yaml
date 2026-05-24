@@ -18,15 +18,6 @@ anchor:
     filter: >-
       ^(?!.*(群|邀请|返利|循环|官网|客服|网站|网址|获取|订阅|流量|到期|机场|下次|版本|官址|备用|过期|已用|联系|邮箱|工单|贩卖|通知|倒卖|防止|国内|地址|频道|无法|说明|使用|提示|特别|访问|支持|教程|关注|更新|作者|加入|USE|USED|TOTAL|EXPIRE|EMAIL|Panel|Channel|Author)).*$
 
-  # 策略组类型模板
-  BaseURL-test: &BaseURL-test
-    type: url-test
-    include-all: true
-    tolerance: 20
-    interval: 120
-    url: https://cp.cloudflare.com/generate_204
-    hidden: true
-
   # 节点筛选正则
   # 香港
   FilterHK: &FilterHK >-
@@ -44,12 +35,22 @@ anchor:
   FilterTW: &FilterTW >-
     ^(?=.*(?i)(台|🇼🇸|🇹🇼|TW|tai|TPE|TSA|KHH)).*$
 
+  # 策略组类型模板
+  BaseURL-test: &BaseURL-test
+    type: url-test
+    include-all: true
+    tolerance: 20
+    interval: 120
+    url: https://cp.cloudflare.com/generate_204
+    hidden: true
+
 # 策略组代理列表模板 - 预定义的代理节点优先级排序
   SelectAU: &SelectAU
     type: url-test
     include-all: true
     tolerance: 20
     interval: 120
+    url: https://cp.cloudflare.com/generate_204
     filter: "^((?!(直连)).)*$"
 
   SelectMS: &SelectMS
