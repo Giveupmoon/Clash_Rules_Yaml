@@ -91,8 +91,7 @@ tun:
   enable:                           true                                                                        # 启用 TUN 功能，用于透明代理
   stack:                            mixed                                                                       # 使用混合协议栈（支持 TCP + UDP）
   device:                           mihomo                                                                      # TUN 虚拟网卡名称，可自定义
-  dns-hijack:                                                                                                   # DNS 劫持设置
-    - 0.0.0.0:53
+  dns-hijack:                       [any:53, tcp://any:53]                                                      # DNS 劫持设置
   auto-route:                       true                                                                        # 自动添加路由表
   auto-detect-interface:            true                                                                        # 自动检测网络接口，绑定 TUN
   auto-redirect:                    true                                                                        # 自动重定向流量到 TUN
