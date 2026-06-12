@@ -46,8 +46,7 @@ redir-port:                         7892                                        
 tproxy-port:                        7894                                                                        # TProxy 端口
 allow-lan:                          true                                                                        # 允许局域网访问
 bind-address:                       "*"                                                                         # 监听所有网卡
-authentication:                                                                                                 # 身份验证
-  - "mihomo:mihomo666"
+authentication:                     [mihomo:mihomo666]                                                          # 身份验证
 
 # =========================================
 #                 内核运行配置
@@ -56,9 +55,7 @@ find-process-mode:                  strict                                      
 mode:                               rule                                                                        # 运行模式
 log-level:                          warning                                                                     # 日志等级
 ipv6:                               true                                                                        # IPV6支持
-profile:                                                                                                        # 持久化设置
-  store-selected:                   true                                                                        # 面板策略组持久化
-  store-fake-ip:                    true                                                                        # Fake-ip持久化
+profile:                            {store-selected: true, store-fake-ip: true}                                 # 面板数据持久化设置
 tcp-concurrent:                     true                                                                        # TCP并发
 unified-delay:                      true                                                                        # 统一延迟
 keep-alive-interval:                15                                                                          # TCP 保活间隔
@@ -150,8 +147,7 @@ dns:
   listen:                           0.0.0.0:1053                                                                # DNS 监听地址和端口
   respect-rules:                    false                                                                       # 是否遵循DNS规则
   fake-ip-filter-mode:              blacklist                                                                   # Fake-IP 黑名单
-  nameserver:                                                                                                   # DNS 上游服务器（用于国内域名解析）
-    - system
+  nameserver: [system]                                                                                          # DNS 上游服务器（直接使用系统dns）
   fake-ip-filter:                                                                                               # fake-ip 黑名单列表 (列表内的域名解析将返回真实ip)
     - "*.lan"
     - "*.local"
