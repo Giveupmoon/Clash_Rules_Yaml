@@ -5,14 +5,13 @@ anchor:
   # 代理提供商锚点
   BaseProvider: &BaseProvider {type: http, interval: 3600, proxy: DIRECT, health-check: {enable: true, url: 'https://g.cn/generate_204', interval: 10}, override: {skip-cert-verify: true, udp: true}, filter: '^(?!.*(群|邀请|返利|循环|官网|客服|网站|网址|获取|订阅|流量|到期|机场|下次|版本|官址|备用|过期|已用|联系|邮箱|工单|贩卖|通知|倒卖|防止|国内|地址|频道|无法|说明|使用|提示|特别|访问|支持|教程|关注|更新|作者|加入|USE|USED|TOTAL|EXPIRE|EMAIL|Panel|Channel|Author))'}
   # 策略组类型模板 - 定义不同的策略组基础配置
-  BaseURL-test: &BaseURL-test {type: url-test, include-all: true, tolerance: 20, interval: 120, url: https://cp.cloudflare.com/generate_204, hidden: true}
-  BaseDIRECT: &BaseDIRECT {type: url-test, hidden: true}
+  BaseUT: &BaseUT {type: url-test, include-all: true, tolerance: 20, interval: 120, url: https://cp.cloudflare.com/generate_204}
   # 节点筛选正则表达式 - 基于地理位置和关键词过滤
-  FilterHK: &FilterHK '^(?=.*(?i)(港|🇭🇰|HK|Hong|HKG)).*$'
-  FilterSG: &FilterSG '^(?=.*(?i)(坡|🇸🇬|SG|Sing|SIN|XSP)).*$'
-  FilterJP: &FilterJP '^(?=.*(?i)(日|🇯🇵|JP|Japan|NRT|HND|KIX|CTS|FUK)).*$'
-  FilterUS: &FilterUS '^(?=.*(?i)(美|🇺🇸|US|USA|SJC|JFK|LAX|ORD|ATL|DFW|SFO|MIA|SEA|IAD)).*$'
-  FilterTW: &FilterTW '^(?=.*(?i)(台|🇼🇸|🇹🇼|TW|tai|TPE|TSA|KHH)).*$'
+  FilterHK: &FilterHK {filter: '^(?=.*(?i)(港|🇭🇰|HK|Hong|HKG)).*$'}
+  FilterSG: &FilterSG {filter: '^(?=.*(?i)(坡|🇸🇬|SG|Sing|SIN|XSP)).*$'}
+  FilterJP: &FilterJP {filter: '^(?=.*(?i)(日|🇯🇵|JP|Japan|NRT|HND|KIX|CTS|FUK)).*$'}
+  FilterUS: &FilterUS {filter: '^(?=.*(?i)(美|🇺🇸|US|USA|SJC|JFK|LAX|ORD|ATL|DFW|SFO|MIA|SEA|IAD)).*$'}
+  FilterTW: &FilterTW {filter: '^(?=.*(?i)(台|🇼🇸|🇹🇼|TW|tai|TPE|TSA|KHH)).*$'}
 
   # 策略组代理列表模板 - 预定义的代理节点优先级排序
   SelectAU: &SelectAU {type: url-test, include-all: true, tolerance: 20, interval: 120, url: https://cp.cloudflare.com/generate_204, filter: "^((?!(直连)).)*$"}
@@ -34,7 +33,7 @@ anchor:
 # =========================================
 proxy-providers:
   # 机场节点集合，使用时请修改
-  Sub-store: {<<: *BaseProvider, url: '订阅链接请复制通用订阅', path: ./provider/sub-store.yaml}
+  Sub-store: {<<: *BaseProvider, url: '订阅链接请复制通用订阅', path: ./providers/sub-store.yaml}
 
 # =========================================
 #                 外部访问配置
@@ -188,12 +187,12 @@ proxy-groups:
   - {name: Steam,          <<: *SelectHK,                                 icon: "https://raw.githubusercontent.com//Giveupmoon/Clash_Rules_Yaml/main/Icon/HOMOMIX/Color/Large/Steam.png"}
   - {name: 测速工具,        <<: *SelectHK,                                 icon: "https://raw.githubusercontent.com//Giveupmoon/Clash_Rules_Yaml/main/Icon/HOMOMIX/Color/Large/SpeedTest.png"}
   - {name: 漏网之鱼,        <<: *SelectMH,                                 icon: "https://raw.githubusercontent.com//Giveupmoon/Clash_Rules_Yaml/main/Icon/match.png"}
-  - {name: 香港节点,        <<: *BaseURL-test,    filter: *FilterHK,       icon: "https://raw.githubusercontent.com//Giveupmoon/Clash_Rules_Yaml/main/Icon/HOMOMIX/Color/Large/Hong_Kong.png"}
-  - {name: 美国节点,        <<: *BaseURL-test,    filter: *FilterUS,       icon: "https://raw.githubusercontent.com//Giveupmoon/Clash_Rules_Yaml/main/Icon/HOMOMIX/Color/Large/USA.png"}
-  - {name: 日本节点,        <<: *BaseURL-test,    filter: *FilterJP,       icon: "https://raw.githubusercontent.com//Giveupmoon/Clash_Rules_Yaml/main/Icon/HOMOMIX/Color/Large/Japan.png"}
-  - {name: 新加坡节点,      <<: *BaseURL-test,    filter: *FilterSG,       icon: "https://raw.githubusercontent.com//Giveupmoon/Clash_Rules_Yaml/main/Icon/HOMOMIX/Color/Large/Singapore.png"}
-  - {name: 台湾节点,        <<: *BaseURL-test,    filter: *FilterTW,       icon: "https://raw.githubusercontent.com//Giveupmoon/Clash_Rules_Yaml/main/Icon/HOMOMIX/Color/Large/Taiwan_Province.png"}
-  - {name: 全球直连,        <<: *BaseDIRECT,    proxies: [DIRECT],       icon: "https://raw.githubusercontent.com//Giveupmoon/Clash_Rules_Yaml/main/Icon/HOMOMIX/Color/Large/DIRECT.png"}
+  - {name: 香港节点,        <<: [*BaseUT, *FilterHK],                icon: "https://raw.githubusercontent.com//Giveupmoon/Clash_Rules_Yaml/main/Icon/HOMOMIX/Color/Large/Hong_Kong.png"}
+  - {name: 美国节点,        <<: [*BaseUT, *FilterUS],                icon: "https://raw.githubusercontent.com//Giveupmoon/Clash_Rules_Yaml/main/Icon/HOMOMIX/Color/Large/USA.png"}
+  - {name: 日本节点,        <<: [*BaseUT, *FilterJP],                icon: "https://raw.githubusercontent.com//Giveupmoon/Clash_Rules_Yaml/main/Icon/HOMOMIX/Color/Large/Japan.png"}
+  - {name: 新加坡节点,      <<: [*BaseUT, *FilterSG],                icon: "https://raw.githubusercontent.com//Giveupmoon/Clash_Rules_Yaml/main/Icon/HOMOMIX/Color/Large/Singapore.png"}
+  - {name: 台湾节点,        <<: [*BaseUT, *FilterTW],                icon: "https://raw.githubusercontent.com//Giveupmoon/Clash_Rules_Yaml/main/Icon/HOMOMIX/Color/Large/Taiwan_Province.png"}
+  - {name: 全球直连,        type: url-test,       proxies: [DIRECT],       icon: "https://raw.githubusercontent.com//Giveupmoon/Clash_Rules_Yaml/main/Icon/HOMOMIX/Color/Large/DIRECT.png"}
 
 # =========================================
 #                 规则配置
