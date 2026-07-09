@@ -191,7 +191,7 @@ proxy-groups:
   - {name: 日本节点,        <<: [*BaseUT, *FilterJP],                icon: "https://raw.githubusercontent.com//Giveupmoon/Clash_Rules_Yaml/main/Icon/HOMOMIX/Color/Large/Japan.png"}
   - {name: 新加坡节点,      <<: [*BaseUT, *FilterSG],                icon: "https://raw.githubusercontent.com//Giveupmoon/Clash_Rules_Yaml/main/Icon/HOMOMIX/Color/Large/Singapore.png"}
   - {name: 台湾节点,        <<: [*BaseUT, *FilterTW],                icon: "https://raw.githubusercontent.com//Giveupmoon/Clash_Rules_Yaml/main/Icon/HOMOMIX/Color/Large/Taiwan_Province.png"}
-  - {name: 全球直连,        type: url-test,       proxies: [DIRECT],       icon: "https://raw.githubusercontent.com//Giveupmoon/Clash_Rules_Yaml/main/Icon/HOMOMIX/Color/Large/DIRECT.png"}
+  - {name: 全球直连,        type: select,       proxies: [DIRECT],       icon: "https://raw.githubusercontent.com//Giveupmoon/Clash_Rules_Yaml/main/Icon/HOMOMIX/Color/Large/DIRECT.png"}
 
 # =========================================
 #                 规则配置

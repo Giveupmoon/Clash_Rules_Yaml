@@ -478,7 +478,7 @@ proxy-groups:
 
    # 直连节点/
   - name: 全球直连
-    type: url-test
+    type: select
     proxies:
       - DIRECT
     icon: "https://raw.githubusercontent.com/Giveupmoon/Clash_Rules_Yaml/main/Icon/HOMOMIX/Color/Large/DIRECT.png"
