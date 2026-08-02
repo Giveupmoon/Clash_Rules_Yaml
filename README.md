@@ -8,7 +8,6 @@
     ├── Giveup_Direct.list
     ├── Giveup_Proxy.list
     └── …
-配置文件 后缀nikki 表示dns直接引用系统dns 及运营商上游dns
 配置文件 后缀json 仅区别于写法不同 内容完全一致
 
 ```
