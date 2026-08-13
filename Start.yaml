@@ -269,7 +269,9 @@ tun:
   auto-redirect:  true
   # 启用端点独立 NAT，保证 UDP 稳定性
   endpoint-independent-nat: true
-
+  # 绕过大陆IP
+  route-exclude-address-set:
+    - cn-ip
 # =========================================
 #                 流量嗅探
 # =========================================
