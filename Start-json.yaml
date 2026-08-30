@@ -15,7 +15,7 @@ anchor:
 
   # 策略组代理列表模板 - 预定义的代理节点优先级排序
   SelectAU: &SelectAU {type: url-test, include-all: true, tolerance: 20, interval: 120, url: https://cp.cloudflare.com/generate_204, filter: "^((?!(直连)).)*$"}
-  SelectMS: &SelectMS {type: select, proxies: [香港节点, 美国节点, 日本节点, 新加坡节点, 台湾节点, 自动选择, 全球直连], use: [Sub-store]}
+  SelectMS: &SelectMS {type: select, include-all: true, proxies: [香港节点, 美国节点, 日本节点, 新加坡节点, 台湾节点, 自动选择, 全球直连]}
   SelectMH: &SelectMH {type: select, proxies: [香港节点, 美国节点, 新加坡节点, 日本节点, 台湾节点, 手动选择, 自动选择, 全球直连], use: [Sub-store]}
   SelectHK: &SelectHK {type: select, proxies: [香港节点, 美国节点, 新加坡节点, 日本节点, 台湾节点, 手动选择, 自动选择, 全球直连]}
   SelectUS: &SelectUS {type: select, proxies: [美国节点, 香港节点, 新加坡节点, 日本节点, 台湾节点, 手动选择, 自动选择, 全球直连]}
@@ -97,43 +97,31 @@ tun:
 #                 流量嗅探
 # =========================================
 sniffer:
-  # 开启用嗅探功能
   enable: true
-  # 强制 DNS 映射 (从 Fake-IP 还原域名)
-  force-dns-mapping: true
-  # 嗅探纯 IP (强制对 IP 进行反向探测)
-  parse-pure-ip: true
-  # 使用嗅探结果覆盖连接目标（推荐开启）
   override-destination: true
-  # 嗅探协议配置
+  parse-pure-ip: true
+  force-dns-mapping: true
   sniff:
-    # QUIC 协议嗅探（HTTP/3）
-    QUIC:
-      ports: [443, 8443]
-    # TLS 协议嗅探（HTTPS）
-    TLS:
-      ports: [443, 8443]
-    # HTTP 协议嗅探
-    HTTP:
-      ports: [80, 8080-8880]
-      override-destination: true 
-  # 强制嗅探识别的域名
+    QUIC: { ports: [443] }
+    TLS:  { ports: [443, 8443] }
+    HTTP: { ports: [80, 8080-8880] }
   force-domain:
     - "+.netflix.com"
     - "+.nflxvideo.net"
     - "+.amazonaws.com"
-    - "+.media.dssott.com"   # Disney+
-    - "+.hbo.com"
-    - "+.hbomaxcdn.com"
+    - "+.media.dssott.com"
     - "+.tiktok.com"
-  # 跳过嗅探的域名 (白名单：防止误杀/断流)
   skip-domain:
-    - "Mijia Cloud"
-    - dlg.io.mi.com
-    - "+.push.apple.com"
-    - "+.oray.com"      # 向日葵
+    - "dlg.io.mi.com"
+    - "+.mi.com"
+    - "+.xiaomi.com"
+    - "+.miwifi.com"
+    - "+.oray.com"
     - "+.sunlogin.net"
-    - "+.crashlytics.com"
+    - "+.push.apple.com"
+# ══ hosts配置 ══ 谷歌商店  解决无法下载的问题
+hosts:
+  'services.googleapis.cn': ['services.googleapis.com']
 
 # =========================================
 #                 DNS 配置
@@ -153,8 +141,8 @@ dns:
     - "*.local"
     - "*.home"
     - "*.arpa"
-    - rule-set,cn
-    - rule-set,private
+    - "rule-set:cn"
+    - "rule-set:private"
 
 # =========================================
 #             策略组配置
