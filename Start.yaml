@@ -59,7 +59,7 @@ anchor:
 
   SelectMS: &SelectMS
     type: select
-    include-all: true,
+    include-all: true
     proxies:
       - 香港节点
       - 美国节点
