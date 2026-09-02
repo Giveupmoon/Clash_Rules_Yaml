@@ -76,7 +76,6 @@ geox-url:
   geoip: "https://raw.githubusercontent.com/MetaCubeX/meta-rules-dat/release/geoip.dat"
   geosite: "https://raw.githubusercontent.com/MetaCubeX/meta-rules-dat/release/geosite.dat"
   mmdb: "https://raw.githubusercontent.com/MetaCubeX/meta-rules-dat/release/geoip.metadb"
-geodata-loader: standard                                                                                        # GEO加载模式
 geo-auto-update:                    true                                                                        # 自动更新   
 geo-update-interval:                24                                                                          # 间隔一天（24小时）
 
