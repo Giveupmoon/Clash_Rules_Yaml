@@ -1,9 +1,2 @@
-##- DOMAIN-SUFFIX,google.com  #匹配域名后缀
-##- DOMAIN-KEYWORD,google #匹配域名关键字
-##- DOMAIN,google.com #匹配域名
-##- SRC-IP-CIDR,192.168.1.201/32 #匹配数据发起IP
-##- DST-PORT,80 #匹配数据目标端口
-##- SRC-PORT,7777 #匹配数据源端口
-##- GEOSITE,category-public-tracker #匹配GEOSITE数据库规则
-##- DOMAIN-REGEX,^abc.*com #正则匹配域名
-##- RULE-SET,providername #匹配规则集
+payload:
+- DOMAIN-SUFFIX,giveup.top
