@@ -1,9 +1,9 @@
 # =========================================
-#                锚点配置
+#                 锚点配置
 # =========================================
 anchor:
   # 代理提供商锚点
-  BaseProvider: &BaseProvider {type: http, interval: 3600, proxy: DIRECT, health-check: {enable: true, url: 'https://g.cn/generate_204', interval: 10}, override: {skip-cert-verify: true, udp: true}, filter: '^(?!.*(群|邀请|返利|循环|官网|客服|网站|网址|获取|订阅|流量|到期|机场|下次|版本|官址|备用|过期|已用|联系|邮箱|工单|贩卖|通知|倒卖|防止|国内|地址|频道|无法|说明|使用|提示|特别|访问|支持|教程|关注|更新|作者|加入|USE|USED|TOTAL|EXPIRE|EMAIL|Panel|Channel|Author))'}
+  BaseProvider: &BaseProvider {type: http, interval: 3600, proxy: DIRECT, health-check: {enable: true, url: 'https://g.cn/generate_204', interval: 10}, override: {skip-cert-verify: true, udp: true}, path: ./providers/sub-store.yaml, filter: '^(?!.*(群|邀请|返利|循环|官网|客服|网站|网址|获取|订阅|流量|到期|机场|下次|版本|官址|备用|过期|已用|联系|邮箱|工单|贩卖|通知|倒卖|防止|国内|地址|频道|无法|说明|使用|提示|特别|访问|支持|教程|关注|更新|作者|加入|USE|USED|TOTAL|EXPIRE|EMAIL|Panel|Channel|Author))'}
   # 策略组类型模板 - 定义不同的策略组基础配置
   BaseUT: &BaseUT {type: url-test, include-all: true, tolerance: 20, interval: 120, url: https://cp.cloudflare.com/generate_204}
   # 节点筛选正则表达式 - 基于地理位置和关键词过滤
@@ -29,45 +29,45 @@ anchor:
   class: &class {type: http, interval: 86400, behavior: classical, format: text}
 
 # =========================================
-#              代理提供商
+#               代理提供商
 # =========================================
 proxy-providers:
   # 机场节点集合，使用时请修改
-  Sub-store: {<<: *BaseProvider, url: '订阅链接请复制通用订阅', path: ./providers/sub-store.yaml}
+  Sub-store: {<<: *BaseProvider, url: '订阅链接请复制通用订阅'}
 
 # =========================================
 #                 外部访问配置
 # =========================================
-port:                               7890                                                                        # HTTP 代理端口
-socks-port:                         7891                                                                        # SOCKS 代理端口
-mixed-port:                         7893                                                                        # 混合端口
-redir-port:                         7892                                                                        # Redir 透明代理端口
-tproxy-port:                        7894                                                                        # TProxy 端口
-allow-lan:                          true                                                                        # 允许局域网访问
-bind-address:                       "*"                                                                         # 监听所有网卡
-authentication:                     [mihomo:mihomo666]                                                          # 身份验证
+port:                               7890                                                                                        # HTTP 代理端口
+socks-port:                         7891                                                                                        # SOCKS 代理端口
+mixed-port:                         7893                                                                                        # 混合端口
+redir-port:                         7892                                                                                        # Redir 透明代理端口
+tproxy-port:                        7894                                                                                        # TProxy 端口
+allow-lan:                          true                                                                                        # 允许局域网访问
+bind-address:                       "*"                                                                                         # 监听所有网卡
+authentication:                     [mihomo:mihomo666]                                                                          # 身份验证
 
 # =========================================
 #                 内核运行配置
 # =========================================
-find-process-mode:                  strict                                                                      # 进程匹配
-mode:                               rule                                                                        # 运行模式
-log-level:                          warning                                                                     # 日志等级
-ipv6:                               true                                                                        # IPV6支持
-profile:                            {store-selected: true, store-fake-ip: true}                                 # 面板数据持久化设置
-tcp-concurrent:                     true                                                                        # TCP并发
-unified-delay:                      true                                                                        # 统一延迟
-keep-alive-interval:                15                                                                          # TCP 保活间隔
-keep-alive-idle:                    600                                                                         # TCP 空闲等待 
+find-process-mode:                  strict                                                                                      # 进程匹配
+mode:                               rule                                                                                        # 运行模式
+log-level:                          warning                                                                                     # 日志等级
+ipv6:                               true                                                                                        # IPV6支持
+profile:                            {store-selected: true, store-fake-ip: true}                                                 # 面板数据持久化设置
+tcp-concurrent:                     true                                                                                        # TCP并发
+unified-delay:                      true                                                                                        # 统一延迟
+keep-alive-interval:                15                                                                                          # TCP 保活间隔
+keep-alive-idle:                    600                                                                                         # TCP 空闲等待 
 
 # =========================================
 #                 面板配置
 # =========================================
-external-ui:                        ui                                                                          # 面板路径
-external-ui-name:                   zashboard                                                                   # 面板名称
-external-ui-url:                    https://github.com/Zephyruso/zashboard/releases/latest/download/dist.zip    # 面板下载地址
-external-controller:                "0.0.0.0:9090"                                                              # 面板监听端口
-secret:                             "password"                                                                  # 面板访问密码
+external-ui:                        ui                                                                                          # 面板路径
+external-ui-name:                   zashboard                                                                                   # 面板名称
+external-ui-url:                    https://github.com/Zephyruso/zashboard/releases/latest/download/dist.zip                    # 面板下载地址
+external-controller:                "0.0.0.0:9090"                                                                              # 面板监听端口
+secret:                             "password"                                                                                  # 面板访问密码
 
 # =========================================
 #                 GEO 数据库配置
@@ -76,21 +76,22 @@ geox-url:
   geoip: "https://raw.githubusercontent.com/MetaCubeX/meta-rules-dat/release/geoip.dat"
   geosite: "https://raw.githubusercontent.com/MetaCubeX/meta-rules-dat/release/geosite.dat"
   mmdb: "https://raw.githubusercontent.com/MetaCubeX/meta-rules-dat/release/geoip.metadb"
-geo-auto-update:                    true                                                                        # 自动更新   
-geo-update-interval:                24                                                                          # 间隔一天（24小时）
+geodata-loader: standard                                                                                        # GEO加载模式
+geo-auto-update:                    true                                                                                        # 自动更新   
+geo-update-interval:                24                                                                                          # 间隔一天（24小时）
 
 # =========================================
 #             TUN入站配置
 # =========================================
 tun:
-  enable:                           true                                                                        # 启用 TUN 功能，用于透明代理
-  stack:                            mixed                                                                       # 使用混合协议栈（支持 TCP + UDP）
-  device:                           mihomo                                                                      # TUN 虚拟网卡名称，可自定义
-  dns-hijack:                       [any:53, tcp://any:53]                                                      # DNS 劫持设置
-  auto-route:                       true                                                                        # 自动添加路由表
-  auto-detect-interface:            true                                                                        # 自动检测网络接口，绑定 TUN
-  auto-redirect:                    true                                                                        # 自动重定向流量到 TUN
-  endpoint-independent-nat:         true                                                                        # 启用端点独立 NAT，保证 UDP 稳定性
+  enable:                           true                                                                                        # 启用 TUN 功能，用于透明代理
+  stack:                            mixed                                                                                       # 使用混合协议栈（支持 TCP + UDP）
+  device:                           mihomo                                                                                      # TUN 虚拟网卡名称，可自定义
+  dns-hijack:                       [any:53, tcp://any:53]                                                                      # DNS 劫持设置
+  auto-route:                       true                                                                                        # 自动添加路由表
+  auto-detect-interface:            true                                                                                        # 自动检测网络接口，绑定 TUN
+  auto-redirect:                    true                                                                                        # 自动重定向流量到 TUN
+  endpoint-independent-nat:         true                                                                                        # 启用端点独立 NAT，保证 UDP 稳定性
 
 # =========================================
 #                 流量嗅探
@@ -126,22 +127,22 @@ hosts:
 #                 DNS 配置
 # =========================================
 dns:
-  enable:                           true                                                                        # 启用 DNS 功能 
-  ipv6:                             true                                                                        # 支持 IPv6
-  enhanced-mode:                    fake-ip                                                                     # 启用 Fake-IP
-  fake-ip-range:                    198.18.0.1/16                                                               # IPv4 Fake-IP 网段
-  listen:                           0.0.0.0:1053                                                                # DNS 监听地址和端口
-  respect-rules:                    false                                                                       # 是否遵循DNS规则
-  fake-ip-filter-mode:              blacklist                                                                   # Fake-IP 黑名单
-  nameserver: [https://doh.pub/dns-query, https://dns.alidns.com/dns-query]                                     # DNS 上游服务器（用于国内域名解析）
-  default-nameserver: [https://223.5.5.5/dns-query, tls://1.1.1.1:853]                                          # 默认DNS服务器 （用于解析上游Doh和兜底解析）
-  fake-ip-filter:                                                                                               # fake-ip 黑名单列表 (列表内的域名解析将返回真实ip)
+  enable:                           true                                                                                        # 启用 DNS 功能 
+  ipv6:                             true                                                                                        # 支持 IPv6
+  enhanced-mode:                    fake-ip                                                                                     # 启用 Fake-IP
+  fake-ip-range:                    198.18.0.1/16                                                                               # IPv4 Fake-IP 网段
+  listen:                           0.0.0.0:1053                                                                                # DNS 监听地址和端口
+  respect-rules:                    false                                                                                       # 是否遵循DNS规则
+  fake-ip-filter-mode:              blacklist                                                                                   # Fake-IP 黑名单
+  nameserver: [https://doh.pub/dns-query, https://dns.alidns.com/dns-query]                                                     # DNS 上游服务器（用于国内域名解析）
+  default-nameserver: [https://223.5.5.5/dns-query, tls://1.1.1.1:853]                                                          # 默认DNS服务器 （用于解析上游Doh和兜底解析）
+  fake-ip-filter:                                                                                                               # fake-ip 黑名单列表 (列表内的域名解析将返回真实ip)
     - "*.lan"
     - "*.local"
     - "*.home"
     - "*.arpa"
-    - "rule-set:cn"
-    - "rule-set:private"
+    - rule-set:cn
+    - rule-set:private
 
 # =========================================
 #             策略组配置
@@ -187,8 +188,6 @@ proxy-groups:
 rules:
   - RULE-SET,private,全球直连
   - RULE-SET,private_IP,全球直连,no-resolve
-  - RULE-SET,giveup_direct,全球直连
-  - RULE-SET,giveup_proxy,手动选择
   - RULE-SET,Custom_Direct_Domain,全球直连
   - RULE-SET,Custom_Direct_IP,全球直连,no-resolve
   - RULE-SET,Custom_Proxy_Domain,手动选择
@@ -234,52 +233,57 @@ rules:
   - MATCH,漏网之鱼
 
 # =========================================
-#            规则提供者
+#             规则提供者
 # =========================================
 rule-providers: 
-  giveup_direct:                            {<<: *class,          url: "https://raw.githubusercontent.com/Giveupmoon/Clash_Rules_Yaml/refs/heads/main/Rules/Giveup_Direct.list"}
-  giveup_proxy:                             {<<: *class,          url: "https://raw.githubusercontent.com/Giveupmoon/Clash_Rules_Yaml/refs/heads/main/Rules/Giveup_Proxy.list"}
-  private:                                  {<<: *domain,         url: "https://raw.githubusercontent.com/MetaCubeX/meta-rules-dat/meta/geo/geosite/private.mrs"}
-  private_IP:                               {<<: *ip,             url: "https://raw.githubusercontent.com/MetaCubeX/meta-rules-dat/meta/geo/geoip/private.mrs"}
-  Custom_Direct_Domain:                     {<<: *domain,         url: "https://raw.githubusercontent.com/Aethersailor/Custom_OpenClash_Rules/refs/heads/main/rule/Custom_Direct_Domain.mrs"}
-  Custom_Direct_IP:                         {<<: *ip,             url: "https://raw.githubusercontent.com/Aethersailor/Custom_OpenClash_Rules/refs/heads/main/rule/Custom_Direct_IP.mrs"}
-  Custom_Proxy_Domain:                      {<<: *domain,         url: "https://raw.githubusercontent.com/Aethersailor/Custom_OpenClash_Rules/refs/heads/main/rule/Custom_Proxy_Domain.mrs"}
-  Custom_Proxy_IP:                          {<<: *ip,             url: "https://raw.githubusercontent.com/Aethersailor/Custom_OpenClash_Rules/refs/heads/main/rule/Custom_Proxy_IP.mrs"}
-  google-cn:                                {<<: *domain,         url: "https://raw.githubusercontent.com/MetaCubeX/meta-rules-dat/meta/geo/geosite/google-cn.mrs"}
-  category-games@cn:                        {<<: *domain,         url: "https://raw.githubusercontent.com/MetaCubeX/meta-rules-dat/meta/geo/geosite/category-games@cn.mrs"}
-  Steam_CDN_Domain:                         {<<: *domain,         url: "https://raw.githubusercontent.com/Aethersailor/Custom_OpenClash_Rules/refs/heads/main/rule/Steam_CDN_Domain.mrs"}
-  Steam_CDN_IP:                             {<<: *ip,             url: "https://raw.githubusercontent.com/Aethersailor/Custom_OpenClash_Rules/refs/heads/main/rule/Steam_CDN_IP.mrs"}
-  category-game-platforms-download:         {<<: *domain,         url: "https://raw.githubusercontent.com/MetaCubeX/meta-rules-dat/meta/geo/geosite/category-game-platforms-download.mrs"}
-  category-public-tracker:                  {<<: *domain,         url: "https://raw.githubusercontent.com/MetaCubeX/meta-rules-dat/meta/geo/geosite/category-public-tracker.mrs"}
-  category-communication:                   {<<: *domain,         url: "https://raw.githubusercontent.com/MetaCubeX/meta-rules-dat/meta/geo/geosite/category-communication.mrs"}
-  category-social-media:                    {<<: *domain,         url: "https://raw.githubusercontent.com/MetaCubeX/meta-rules-dat/meta/geo/geosite/category-social-media-!cn.mrs"}
-  openai:                                   {<<: *domain,         url: "https://raw.githubusercontent.com/MetaCubeX/meta-rules-dat/meta/geo/geosite/openai.mrs"}
-  google-gemini:                            {<<: *domain,         url: "https://raw.githubusercontent.com/MetaCubeX/meta-rules-dat/meta/geo/geosite/google-gemini.mrs"}
-  category-ai:                              {<<: *domain,         url: "https://raw.githubusercontent.com/MetaCubeX/meta-rules-dat/meta/geo/geosite/category-ai-!cn.mrs"}
-  github:                                   {<<: *domain,         url: "https://raw.githubusercontent.com/MetaCubeX/meta-rules-dat/meta/geo/geosite/github.mrs"}
-  category-speedtest:                       {<<: *domain,         url: "https://raw.githubusercontent.com/MetaCubeX/meta-rules-dat/meta/geo/geosite/category-speedtest.mrs"}
-  steam:                                    {<<: *domain,         url: "https://raw.githubusercontent.com/MetaCubeX/meta-rules-dat/meta/geo/geosite/steam.mrs"}
-  youtube:                                  {<<: *domain,         url: "https://raw.githubusercontent.com/MetaCubeX/meta-rules-dat/meta/geo/geosite/youtube.mrs"}
-  apple-tvplus:                             {<<: *domain,         url: "https://raw.githubusercontent.com/MetaCubeX/meta-rules-dat/meta/geo/geosite/apple-tvplus.mrs"}
-  apple:                                    {<<: *domain,         url: "https://raw.githubusercontent.com/MetaCubeX/meta-rules-dat/meta/geo/geosite/apple.mrs"}
-  microsoft:                                {<<: *domain,         url: "https://raw.githubusercontent.com/MetaCubeX/meta-rules-dat/meta/geo/geosite/microsoft.mrs"}
-  google:                                   {<<: *domain,         url: "https://raw.githubusercontent.com/MetaCubeX/meta-rules-dat/meta/geo/geosite/google.mrs"}
-  tiktok:                                   {<<: *domain,         url: "https://raw.githubusercontent.com/MetaCubeX/meta-rules-dat/meta/geo/geosite/tiktok.mrs"}
-  netflix:                                  {<<: *domain,         url: "https://raw.githubusercontent.com/MetaCubeX/meta-rules-dat/meta/geo/geosite/netflix.mrs"}
-  disney:                                   {<<: *domain,         url: "https://raw.githubusercontent.com/MetaCubeX/meta-rules-dat/meta/geo/geosite/disney.mrs"}
-  hbo:                                      {<<: *domain,         url: "https://raw.githubusercontent.com/MetaCubeX/meta-rules-dat/meta/geo/geosite/hbo.mrs"}
-  primevideo:                               {<<: *domain,         url: "https://raw.githubusercontent.com/MetaCubeX/meta-rules-dat/meta/geo/geosite/primevideo.mrs"}
-  category-emby:                            {<<: *domain,         url: "https://raw.githubusercontent.com/MetaCubeX/meta-rules-dat/meta/geo/geosite/category-emby.mrs"}
-  spotify:                                  {<<: *domain,         url: "https://raw.githubusercontent.com/MetaCubeX/meta-rules-dat/meta/geo/geosite/spotify.mrs"}
-  bahamut:                                  {<<: *domain,         url: "https://raw.githubusercontent.com/MetaCubeX/meta-rules-dat/meta/geo/geosite/bahamut.mrs"}
-  category-games:                           {<<: *domain,         url: "https://raw.githubusercontent.com/MetaCubeX/meta-rules-dat/meta/geo/geosite/category-games.mrs"}
-  category-entertainment:                   {<<: *domain,         url: "https://raw.githubusercontent.com/MetaCubeX/meta-rules-dat/meta/geo/geosite/category-entertainment.mrs"}
-  gfw:                                      {<<: *domain,         url: "https://raw.githubusercontent.com/MetaCubeX/meta-rules-dat/meta/geo/geosite/gfw.mrs"}
-  telegram:                                 {<<: *ip,             url: "https://raw.githubusercontent.com/MetaCubeX/meta-rules-dat/meta/geo/geoip/telegram.mrs"}
-  twitter:                                  {<<: *ip,             url: "https://raw.githubusercontent.com/MetaCubeX/meta-rules-dat/meta/geo/geoip/twitter.mrs"}
-  facebook:                                 {<<: *ip,             url: "https://raw.githubusercontent.com/MetaCubeX/meta-rules-dat/meta/geo/geoip/facebook.mrs"}
-  google-ip:                                {<<: *ip,             url: "https://raw.githubusercontent.com/MetaCubeX/meta-rules-dat/meta/geo/geoip/google.mrs"}
-  netflix-ip:                               {<<: *ip,             url: "https://raw.githubusercontent.com/MetaCubeX/meta-rules-dat/meta/geo/geoip/netflix.mrs"}
-  cn:                                       {<<: *domain,         url: "https://raw.githubusercontent.com/MetaCubeX/meta-rules-dat/meta/geo/geosite/cn.mrs"}
-  cn-ip:                                    {<<: *ip,             url: "https://raw.githubusercontent.com/MetaCubeX/meta-rules-dat/meta/geo/geoip/cn.mrs"}
-  PayPal:                                   {<<: *domain,         url: "https://raw.githubusercontent.com/MetaCubeX/meta-rules-dat/meta/geo/geosite/paypal.mrs"}
+# =========================================
+#             域名规则
+# =========================================
+  private:                                  {<<: *domain, path: ./rules/private.mrs, url: "https://raw.githubusercontent.com/MetaCubeX/meta-rules-dat/meta/geo/geosite/private.mrs"}
+  Custom_Direct_Domain:                     {<<: *domain, path: ./rules/Custom_Direct_Domain.mrs, url: "https://raw.githubusercontent.com/Aethersailor/Custom_OpenClash_Rules/refs/heads/main/rule/Custom_Direct_Domain.mrs"}
+  Custom_Proxy_Domain:                      {<<: *domain, path: ./rules/Custom_Proxy_Domain.mrs, url: "https://raw.githubusercontent.com/Aethersailor/Custom_OpenClash_Rules/refs/heads/main/rule/Custom_Proxy_Domain.mrs"}
+  google-cn:                                {<<: *domain, path: ./rules/google-cn.mrs, url: "https://raw.githubusercontent.com/MetaCubeX/meta-rules-dat/meta/geo/geosite/google-cn.mrs"}
+  category-games@cn:                        {<<: *domain, path: ./rules/category-games@cn.mrs, url: "https://raw.githubusercontent.com/MetaCubeX/meta-rules-dat/meta/geo/geosite/category-games@cn.mrs"}
+  Steam_CDN_Domain:                         {<<: *domain, path: ./rules/Steam_CDN_Domain.mrs, url: "https://raw.githubusercontent.com/Aethersailor/Custom_OpenClash_Rules/refs/heads/main/rule/Steam_CDN_Domain.mrs"}
+  category-game-platforms-download:         {<<: *domain, path: ./rules/category-game-platforms-download.mrs, url: "https://raw.githubusercontent.com/MetaCubeX/meta-rules-dat/meta/geo/geosite/category-game-platforms-download.mrs"}
+  category-public-tracker:                  {<<: *domain, path: ./rules/category-public-tracker.mrs, url: "https://raw.githubusercontent.com/MetaCubeX/meta-rules-dat/meta/geo/geosite/category-public-tracker.mrs"}
+  category-communication:                   {<<: *domain, path: ./rules/category-communication.mrs, url: "https://raw.githubusercontent.com/MetaCubeX/meta-rules-dat/meta/geo/geosite/category-communication.mrs"}
+  category-social-media:                    {<<: *domain, path: ./rules/category-social-media.mrs, url: "https://raw.githubusercontent.com/MetaCubeX/meta-rules-dat/meta/geo/geosite/category-social-media-!cn.mrs"}
+  openai:                                   {<<: *domain, path: ./rules/openai.mrs, url: "https://raw.githubusercontent.com/MetaCubeX/meta-rules-dat/meta/geo/geosite/openai.mrs"}
+  google-gemini:                            {<<: *domain, path: ./rules/google-gemini.mrs, url: "https://raw.githubusercontent.com/MetaCubeX/meta-rules-dat/meta/geo/geosite/google-gemini.mrs"}
+  category-ai:                              {<<: *domain, path: ./rules/category-ai.mrs, url: "https://raw.githubusercontent.com/MetaCubeX/meta-rules-dat/meta/geo/geosite/category-ai-!cn.mrs"}
+  github:                                   {<<: *domain, path: ./rules/github.mrs, url: "https://raw.githubusercontent.com/MetaCubeX/meta-rules-dat/meta/geo/geosite/github.mrs"}
+  category-speedtest:                       {<<: *domain, path: ./rules/category-speedtest.mrs, url: "https://raw.githubusercontent.com/MetaCubeX/meta-rules-dat/meta/geo/geosite/category-speedtest.mrs"}
+  steam:                                    {<<: *domain, path: ./rules/steam.mrs, url: "https://raw.githubusercontent.com/MetaCubeX/meta-rules-dat/meta/geo/geosite/steam.mrs"}
+  youtube:                                  {<<: *domain, path: ./rules/youtube.mrs, url: "https://raw.githubusercontent.com/MetaCubeX/meta-rules-dat/meta/geo/geosite/youtube.mrs"}
+  apple-tvplus:                             {<<: *domain, path: ./rules/apple-tvplus.mrs, url: "https://raw.githubusercontent.com/MetaCubeX/meta-rules-dat/meta/geo/geosite/apple-tvplus.mrs"}
+  apple:                                    {<<: *domain, path: ./rules/apple.mrs, url: "https://raw.githubusercontent.com/MetaCubeX/meta-rules-dat/meta/geo/geosite/apple.mrs"}
+  microsoft:                                {<<: *domain, path: ./rules/microsoft.mrs, url: "https://raw.githubusercontent.com/MetaCubeX/meta-rules-dat/meta/geo/geosite/microsoft.mrs"}
+  google:                                   {<<: *domain, path: ./rules/google.mrs, url: "https://raw.githubusercontent.com/MetaCubeX/meta-rules-dat/meta/geo/geosite/google.mrs"}
+  tiktok:                                   {<<: *domain, path: ./rules/tiktok.mrs, url: "https://raw.githubusercontent.com/MetaCubeX/meta-rules-dat/meta/geo/geosite/tiktok.mrs"}
+  netflix:                                  {<<: *domain, path: ./rules/netflix.mrs, url: "https://raw.githubusercontent.com/MetaCubeX/meta-rules-dat/meta/geo/geosite/netflix.mrs"}
+  disney:                                   {<<: *domain, path: ./rules/disney.mrs, url: "https://raw.githubusercontent.com/MetaCubeX/meta-rules-dat/meta/geo/geosite/disney.mrs"}
+  hbo:                                      {<<: *domain, path: ./rules/hbo.mrs, url: "https://raw.githubusercontent.com/MetaCubeX/meta-rules-dat/meta/geo/geosite/hbo.mrs"}
+  primevideo:                               {<<: *domain, path: ./rules/primevideo.mrs, url: "https://raw.githubusercontent.com/MetaCubeX/meta-rules-dat/meta/geo/geosite/primevideo.mrs"}
+  category-emby:                            {<<: *domain, path: ./rules/category-emby.mrs, url: "https://raw.githubusercontent.com/MetaCubeX/meta-rules-dat/meta/geo/geosite/category-emby.mrs"}
+  spotify:                                  {<<: *domain, path: ./rules/spotify.mrs, url: "https://raw.githubusercontent.com/MetaCubeX/meta-rules-dat/meta/geo/geosite/spotify.mrs"}
+  bahamut:                                  {<<: *domain, path: ./rules/bahamut.mrs, url: "https://raw.githubusercontent.com/MetaCubeX/meta-rules-dat/meta/geo/geosite/bahamut.mrs"}
+  category-games:                           {<<: *domain, path: ./rules/category-games.mrs, url: "https://raw.githubusercontent.com/MetaCubeX/meta-rules-dat/meta/geo/geosite/category-games.mrs"}
+  category-entertainment:                   {<<: *domain, path: ./rules/category-entertainment.mrs, url: "https://raw.githubusercontent.com/MetaCubeX/meta-rules-dat/meta/geo/geosite/category-entertainment.mrs"}
+  gfw:                                      {<<: *domain, path: ./rules/gfw.mrs, url: "https://raw.githubusercontent.com/MetaCubeX/meta-rules-dat/meta/geo/geosite/gfw.mrs"}
+  cn:                                       {<<: *domain, path: ./rules/cn.mrs, url: "https://raw.githubusercontent.com/MetaCubeX/meta-rules-dat/meta/geo/geosite/cn.mrs"}
+  PayPal:                                   {<<: *domain, path: ./rules/PayPal.mrs, url: "https://raw.githubusercontent.com/MetaCubeX/meta-rules-dat/meta/geo/geosite/paypal.mrs"}
+
+# =========================================
+#             IP规则
+# =========================================
+  private_IP:                               {<<: *ip, path: ./rules/private_IP.mrs, url: "https://raw.githubusercontent.com/MetaCubeX/meta-rules-dat/meta/geo/geoip/private.mrs"}
+  Custom_Direct_IP:                         {<<: *ip, path: ./rules/Custom_Direct_IP.mrs, url: "https://raw.githubusercontent.com/Aethersailor/Custom_OpenClash_Rules/refs/heads/main/rule/Custom_Direct_IP.mrs"}
+  Custom_Proxy_IP:                          {<<: *ip, path: ./rules/Custom_Proxy_IP.mrs, url: "https://raw.githubusercontent.com/Aethersailor/Custom_OpenClash_Rules/refs/heads/main/rule/Custom_Proxy_IP.mrs"}
+  Steam_CDN_IP:                             {<<: *ip, path: ./rules/Steam_CDN_IP.mrs, url: "https://raw.githubusercontent.com/Aethersailor/Custom_OpenClash_Rules/refs/heads/main/rule/Steam_CDN_IP.mrs"}
+  telegram:                                 {<<: *ip, path: ./rules/telegram.mrs, url: "https://raw.githubusercontent.com/MetaCubeX/meta-rules-dat/meta/geo/geoip/telegram.mrs"}
+  twitter:                                  {<<: *ip, path: ./rules/twitter.mrs, url: "https://raw.githubusercontent.com/MetaCubeX/meta-rules-dat/meta/geo/geoip/twitter.mrs"}
+  facebook:                                 {<<: *ip, path: ./rules/facebook.mrs, url: "https://raw.githubusercontent.com/MetaCubeX/meta-rules-dat/meta/geo/geoip/facebook.mrs"}
+  google-ip:                                {<<: *ip, path: ./rules/google-ip.mrs, url: "https://raw.githubusercontent.com/MetaCubeX/meta-rules-dat/meta/geo/geoip/google.mrs"}
+  netflix-ip:                               {<<: *ip, path: ./rules/netflix-ip.mrs, url: "https://raw.githubusercontent.com/MetaCubeX/meta-rules-dat/meta/geo/geoip/netflix.mrs"}
+  cn-ip:                                    {<<: *ip, path: ./rules/cn-ip.mrs, url: "https://raw.githubusercontent.com/MetaCubeX/meta-rules-dat/meta/geo/geoip/cn.mrs"}

@@ -4,11 +4,13 @@
 .
 ├── README.md              ← 项目说明（这个文件）
 ├── xxxxx.yaml             ← 核心配置样例，可直接用于 mihome内核启动
+├── My-config.yaml         ← 个人使用配置
 └── Rules/                 ← 规则提供者（Rule‑Set）各类规则文件
     ├── Giveup_Direct.list
     ├── Giveup_Proxy.list
     └── …
 配置文件 后缀json 仅区别于写法不同 内容完全一致
+个人使用配置与公开配置无差别 仅仅是多了个人规则和入站节点
 
 ```
 后缀nikki的配置 务必使用nikki在默认配置的情况下移除所有混入配置（将配置项全部改为`不修改`）运行
