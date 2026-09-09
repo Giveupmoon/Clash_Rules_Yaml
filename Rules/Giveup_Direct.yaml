@@ -1,3 +1,2 @@
 payload:
-- DOMAIN-SUFFIX,giveup.top
 - 'IP-CIDR,0.0.0.1/32 # 未知IP绕过内核'
