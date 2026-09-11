@@ -59,6 +59,7 @@ tcp-concurrent:                     true                                        
 unified-delay:                      true                                                                                        # 统一延迟
 keep-alive-interval:                15                                                                                          # TCP 保活间隔
 keep-alive-idle:                    600                                                                                         # TCP 空闲等待 
+experimental:                       {quic-go-disable-gso: true}                                                                 # 禁用 GSO
 
 # =========================================
 #                 面板配置
@@ -76,7 +77,7 @@ geox-url:
   geoip: "https://raw.githubusercontent.com/MetaCubeX/meta-rules-dat/release/geoip.dat"
   geosite: "https://raw.githubusercontent.com/MetaCubeX/meta-rules-dat/release/geosite.dat"
   mmdb: "https://raw.githubusercontent.com/MetaCubeX/meta-rules-dat/release/geoip.metadb"
-geodata-loader: standard                                                                                        # GEO加载模式
+geodata-loader: standard                                                                                                        # GEO加载模式
 geo-auto-update:                    true                                                                                        # 自动更新   
 geo-update-interval:                24                                                                                          # 间隔一天（24小时）
 
@@ -92,6 +93,7 @@ tun:
   auto-detect-interface:            true                                                                                        # 自动检测网络接口，绑定 TUN
   auto-redirect:                    true                                                                                        # 自动重定向流量到 TUN
   endpoint-independent-nat:         true                                                                                        # 启用端点独立 NAT，保证 UDP 稳定性
+  route-exclude-address-set:        [China-IP]                                                                                  # 绕过IP
 
 # =========================================
 #                 流量嗅探
@@ -141,8 +143,8 @@ dns:
     - "*.local"
     - "*.home"
     - "*.arpa"
-    - rule-set:cn
-    - rule-set:private
+    - rule-set:China
+    - rule-set:Private
 
 # =========================================
 #             策略组配置
@@ -186,50 +188,51 @@ proxy-groups:
 #                 规则配置
 # =========================================
 rules:
-  - RULE-SET,private,全球直连
-  - RULE-SET,private_IP,全球直连,no-resolve
+  - AND,((NETWORK,UDP),(DST-PORT,443),(NOT,((OR,((RULE-SET,China),(RULE-SET,China-IP,no-resolve)))))),REJECT
+  - RULE-SET,Private,全球直连
+  - RULE-SET,Private-IP,全球直连,no-resolve
   - RULE-SET,Custom_Direct_Domain,全球直连
   - RULE-SET,Custom_Direct_IP,全球直连,no-resolve
   - RULE-SET,Custom_Proxy_Domain,手动选择
   - RULE-SET,Custom_Proxy_IP,手动选择,no-resolve
-  - RULE-SET,google-cn,全球直连
-  - RULE-SET,category-games@cn,全球直连
+  - RULE-SET,Google-cn,全球直连
+  - RULE-SET,Category-Games-cn,全球直连
   - RULE-SET,Steam_CDN_Domain,全球直连
   - RULE-SET,Steam_CDN_IP,全球直连,no-resolve
-  - RULE-SET,category-game-platforms-download,全球直连
-  - RULE-SET,category-public-tracker,全球直连
-  - RULE-SET,category-communication,即时通讯
-  - RULE-SET,category-social-media,社交媒体
-  - RULE-SET,openai,ChatGPT
-  - RULE-SET,google-gemini,Gemini
-  - RULE-SET,category-ai,AI服务
-  - RULE-SET,github,GitHub
-  - RULE-SET,category-speedtest,测速工具
-  - RULE-SET,steam,Steam
-  - RULE-SET,youtube,YouTube
-  - RULE-SET,apple-tvplus,AppleTV+
+  - RULE-SET,Category-Game-Platforms-Download,全球直连
+  - RULE-SET,Category-Public-Tracker,全球直连
+  - RULE-SET,Category-Communication,即时通讯
+  - RULE-SET,Category-Social-Media,社交媒体
+  - RULE-SET,OpenAI,ChatGPT
+  - RULE-SET,Google-Gemini,Gemini
+  - RULE-SET,Category-AI,AI服务
+  - RULE-SET,Github,GitHub
+  - RULE-SET,Category-Speedtest,测速工具
+  - RULE-SET,Steam,Steam
+  - RULE-SET,Youtube,YouTube
+  - RULE-SET,Apple-TV,AppleTV+
   - RULE-SET,PayPal,PayPal
-  - RULE-SET,apple,苹果服务
-  - RULE-SET,microsoft,微软服务
-  - RULE-SET,google,谷歌服务
-  - RULE-SET,tiktok,TikTok
-  - RULE-SET,netflix,Netflix
-  - RULE-SET,disney,DisneyPlus
-  - RULE-SET,hbo,HBO
-  - RULE-SET,primevideo,PrimeVideo
-  - RULE-SET,category-emby,Emby
-  - RULE-SET,spotify,Spotify
-  - RULE-SET,bahamut,Bahamut
-  - RULE-SET,category-games,游戏平台
-  - RULE-SET,category-entertainment,国外媒体
-  - RULE-SET,gfw,手动选择
-  - RULE-SET,telegram,即时通讯,no-resolve
-  - RULE-SET,twitter,社交媒体,no-resolve
-  - RULE-SET,facebook,社交媒体,no-resolve
-  - RULE-SET,google-ip,谷歌服务,no-resolve
-  - RULE-SET,netflix-ip,Netflix,no-resolve
-  - RULE-SET,cn,全球直连
-  - RULE-SET,cn-ip,全球直连,no-resolve
+  - RULE-SET,Apple,苹果服务
+  - RULE-SET,Microsoft,微软服务
+  - RULE-SET,Google,谷歌服务
+  - RULE-SET,Tiktok,TikTok
+  - RULE-SET,Netflix,Netflix
+  - RULE-SET,Disney,DisneyPlus
+  - RULE-SET,Hbo,HBO
+  - RULE-SET,Primevideo,PrimeVideo
+  - RULE-SET,Category-Emby,Emby
+  - RULE-SET,Spotify,Spotify
+  - RULE-SET,Bahamut,Bahamut
+  - RULE-SET,Category-Games,游戏平台
+  - RULE-SET,Category-Entertainment,国外媒体
+  - RULE-SET,Gfw,手动选择
+  - RULE-SET,Telegram,即时通讯,no-resolve
+  - RULE-SET,Twitter,社交媒体,no-resolve
+  - RULE-SET,Facebook,社交媒体,no-resolve
+  - RULE-SET,Google-IP,谷歌服务,no-resolve
+  - RULE-SET,Netflix-IP,Netflix,no-resolve
+  - RULE-SET,China,全球直连
+  - RULE-SET,China-IP,全球直连,no-resolve
   - MATCH,漏网之鱼
 
 # =========================================
@@ -239,51 +242,51 @@ rule-providers:
 # =========================================
 #             域名规则
 # =========================================
-  private:                                  {<<: *domain, path: ./rules/private.mrs, url: "https://raw.githubusercontent.com/MetaCubeX/meta-rules-dat/meta/geo/geosite/private.mrs"}
-  Custom_Direct_Domain:                     {<<: *domain, path: ./rules/Custom_Direct_Domain.mrs, url: "https://raw.githubusercontent.com/Aethersailor/Custom_OpenClash_Rules/refs/heads/main/rule/Custom_Direct_Domain.mrs"}
-  Custom_Proxy_Domain:                      {<<: *domain, path: ./rules/Custom_Proxy_Domain.mrs, url: "https://raw.githubusercontent.com/Aethersailor/Custom_OpenClash_Rules/refs/heads/main/rule/Custom_Proxy_Domain.mrs"}
-  google-cn:                                {<<: *domain, path: ./rules/google-cn.mrs, url: "https://raw.githubusercontent.com/MetaCubeX/meta-rules-dat/meta/geo/geosite/google-cn.mrs"}
-  category-games@cn:                        {<<: *domain, path: ./rules/category-games@cn.mrs, url: "https://raw.githubusercontent.com/MetaCubeX/meta-rules-dat/meta/geo/geosite/category-games@cn.mrs"}
-  Steam_CDN_Domain:                         {<<: *domain, path: ./rules/Steam_CDN_Domain.mrs, url: "https://raw.githubusercontent.com/Aethersailor/Custom_OpenClash_Rules/refs/heads/main/rule/Steam_CDN_Domain.mrs"}
-  category-game-platforms-download:         {<<: *domain, path: ./rules/category-game-platforms-download.mrs, url: "https://raw.githubusercontent.com/MetaCubeX/meta-rules-dat/meta/geo/geosite/category-game-platforms-download.mrs"}
-  category-public-tracker:                  {<<: *domain, path: ./rules/category-public-tracker.mrs, url: "https://raw.githubusercontent.com/MetaCubeX/meta-rules-dat/meta/geo/geosite/category-public-tracker.mrs"}
-  category-communication:                   {<<: *domain, path: ./rules/category-communication.mrs, url: "https://raw.githubusercontent.com/MetaCubeX/meta-rules-dat/meta/geo/geosite/category-communication.mrs"}
-  category-social-media:                    {<<: *domain, path: ./rules/category-social-media.mrs, url: "https://raw.githubusercontent.com/MetaCubeX/meta-rules-dat/meta/geo/geosite/category-social-media-!cn.mrs"}
-  openai:                                   {<<: *domain, path: ./rules/openai.mrs, url: "https://raw.githubusercontent.com/MetaCubeX/meta-rules-dat/meta/geo/geosite/openai.mrs"}
-  google-gemini:                            {<<: *domain, path: ./rules/google-gemini.mrs, url: "https://raw.githubusercontent.com/MetaCubeX/meta-rules-dat/meta/geo/geosite/google-gemini.mrs"}
-  category-ai:                              {<<: *domain, path: ./rules/category-ai.mrs, url: "https://raw.githubusercontent.com/MetaCubeX/meta-rules-dat/meta/geo/geosite/category-ai-!cn.mrs"}
-  github:                                   {<<: *domain, path: ./rules/github.mrs, url: "https://raw.githubusercontent.com/MetaCubeX/meta-rules-dat/meta/geo/geosite/github.mrs"}
-  category-speedtest:                       {<<: *domain, path: ./rules/category-speedtest.mrs, url: "https://raw.githubusercontent.com/MetaCubeX/meta-rules-dat/meta/geo/geosite/category-speedtest.mrs"}
-  steam:                                    {<<: *domain, path: ./rules/steam.mrs, url: "https://raw.githubusercontent.com/MetaCubeX/meta-rules-dat/meta/geo/geosite/steam.mrs"}
-  youtube:                                  {<<: *domain, path: ./rules/youtube.mrs, url: "https://raw.githubusercontent.com/MetaCubeX/meta-rules-dat/meta/geo/geosite/youtube.mrs"}
-  apple-tvplus:                             {<<: *domain, path: ./rules/apple-tvplus.mrs, url: "https://raw.githubusercontent.com/MetaCubeX/meta-rules-dat/meta/geo/geosite/apple-tvplus.mrs"}
-  apple:                                    {<<: *domain, path: ./rules/apple.mrs, url: "https://raw.githubusercontent.com/MetaCubeX/meta-rules-dat/meta/geo/geosite/apple.mrs"}
-  microsoft:                                {<<: *domain, path: ./rules/microsoft.mrs, url: "https://raw.githubusercontent.com/MetaCubeX/meta-rules-dat/meta/geo/geosite/microsoft.mrs"}
-  google:                                   {<<: *domain, path: ./rules/google.mrs, url: "https://raw.githubusercontent.com/MetaCubeX/meta-rules-dat/meta/geo/geosite/google.mrs"}
-  tiktok:                                   {<<: *domain, path: ./rules/tiktok.mrs, url: "https://raw.githubusercontent.com/MetaCubeX/meta-rules-dat/meta/geo/geosite/tiktok.mrs"}
-  netflix:                                  {<<: *domain, path: ./rules/netflix.mrs, url: "https://raw.githubusercontent.com/MetaCubeX/meta-rules-dat/meta/geo/geosite/netflix.mrs"}
-  disney:                                   {<<: *domain, path: ./rules/disney.mrs, url: "https://raw.githubusercontent.com/MetaCubeX/meta-rules-dat/meta/geo/geosite/disney.mrs"}
-  hbo:                                      {<<: *domain, path: ./rules/hbo.mrs, url: "https://raw.githubusercontent.com/MetaCubeX/meta-rules-dat/meta/geo/geosite/hbo.mrs"}
-  primevideo:                               {<<: *domain, path: ./rules/primevideo.mrs, url: "https://raw.githubusercontent.com/MetaCubeX/meta-rules-dat/meta/geo/geosite/primevideo.mrs"}
-  category-emby:                            {<<: *domain, path: ./rules/category-emby.mrs, url: "https://raw.githubusercontent.com/MetaCubeX/meta-rules-dat/meta/geo/geosite/category-emby.mrs"}
-  spotify:                                  {<<: *domain, path: ./rules/spotify.mrs, url: "https://raw.githubusercontent.com/MetaCubeX/meta-rules-dat/meta/geo/geosite/spotify.mrs"}
-  bahamut:                                  {<<: *domain, path: ./rules/bahamut.mrs, url: "https://raw.githubusercontent.com/MetaCubeX/meta-rules-dat/meta/geo/geosite/bahamut.mrs"}
-  category-games:                           {<<: *domain, path: ./rules/category-games.mrs, url: "https://raw.githubusercontent.com/MetaCubeX/meta-rules-dat/meta/geo/geosite/category-games.mrs"}
-  category-entertainment:                   {<<: *domain, path: ./rules/category-entertainment.mrs, url: "https://raw.githubusercontent.com/MetaCubeX/meta-rules-dat/meta/geo/geosite/category-entertainment.mrs"}
-  gfw:                                      {<<: *domain, path: ./rules/gfw.mrs, url: "https://raw.githubusercontent.com/MetaCubeX/meta-rules-dat/meta/geo/geosite/gfw.mrs"}
-  cn:                                       {<<: *domain, path: ./rules/cn.mrs, url: "https://raw.githubusercontent.com/MetaCubeX/meta-rules-dat/meta/geo/geosite/cn.mrs"}
-  PayPal:                                   {<<: *domain, path: ./rules/PayPal.mrs, url: "https://raw.githubusercontent.com/MetaCubeX/meta-rules-dat/meta/geo/geosite/paypal.mrs"}
+  Private:                          {<<: *domain, path: ./rules/Private.mrs, url: "https://raw.githubusercontent.com/MetaCubeX/meta-rules-dat/meta/geo/geosite/private.mrs"}
+  Custom_Direct_Domain:             {<<: *domain, path: ./rules/Custom_Direct_Domain.mrs, url: "https://raw.githubusercontent.com/Aethersailor/Custom_OpenClash_Rules/refs/heads/main/rule/Custom_Direct_Domain.mrs"}
+  Custom_Proxy_Domain:              {<<: *domain, path: ./rules/Custom_Proxy_Domain.mrs, url: "https://raw.githubusercontent.com/Aethersailor/Custom_OpenClash_Rules/refs/heads/main/rule/Custom_Proxy_Domain.mrs"}
+  Google-cn:                        {<<: *domain, path: ./rules/Google-cn.mrs, url: "https://raw.githubusercontent.com/MetaCubeX/meta-rules-dat/meta/geo/geosite/google-cn.mrs"}
+  Category-Games-cn:                {<<: *domain, path: ./rules/Category-Games-cn.mrs, url: "https://raw.githubusercontent.com/MetaCubeX/meta-rules-dat/meta/geo/geosite/category-games@cn.mrs"}
+  Steam_CDN_Domain:                 {<<: *domain, path: ./rules/Steam_CDN_Domain.mrs, url: "https://raw.githubusercontent.com/Aethersailor/Custom_OpenClash_Rules/refs/heads/main/rule/Steam_CDN_Domain.mrs"}
+  Category-Game-Platforms-Download: {<<: *domain, path: ./rules/Category-Game-Platforms-Download.mrs, url: "https://raw.githubusercontent.com/MetaCubeX/meta-rules-dat/meta/geo/geosite/category-game-platforms-download.mrs"}
+  Category-Public-Tracker:          {<<: *domain, path: ./rules/Category-Public-Tracker.mrs, url: "https://raw.githubusercontent.com/MetaCubeX/meta-rules-dat/meta/geo/geosite/category-public-tracker.mrs"}
+  Category-Communication:           {<<: *domain, path: ./rules/Category-Communication.mrs, url: "https://raw.githubusercontent.com/MetaCubeX/meta-rules-dat/meta/geo/geosite/category-communication.mrs"}
+  Category-Social-Media:            {<<: *domain, path: ./rules/Category-Social-Media.mrs, url: "https://raw.githubusercontent.com/MetaCubeX/meta-rules-dat/meta/geo/geosite/category-social-media-!cn.mrs"}
+  OpenAI:                           {<<: *domain, path: ./rules/OpenAI.mrs, url: "https://raw.githubusercontent.com/MetaCubeX/meta-rules-dat/meta/geo/geosite/openai.mrs"}
+  Google-Gemini:                    {<<: *domain, path: ./rules/Google-Gemini.mrs, url: "https://raw.githubusercontent.com/MetaCubeX/meta-rules-dat/meta/geo/geosite/google-gemini.mrs"}
+  Category-AI:                      {<<: *domain, path: ./rules/Category-AI.mrs, url: "https://raw.githubusercontent.com/MetaCubeX/meta-rules-dat/meta/geo/geosite/category-ai-!cn.mrs"}
+  Github:                           {<<: *domain, path: ./rules/Github.mrs, url: "https://raw.githubusercontent.com/MetaCubeX/meta-rules-dat/meta/geo/geosite/github.mrs"}
+  Category-Speedtest:               {<<: *domain, path: ./rules/Category-Speedtest.mrs, url: "https://raw.githubusercontent.com/MetaCubeX/meta-rules-dat/meta/geo/geosite/category-speedtest.mrs"}
+  Steam:                            {<<: *domain, path: ./rules/Steam.mrs, url: "https://raw.githubusercontent.com/MetaCubeX/meta-rules-dat/meta/geo/geosite/steam.mrs"}
+  Youtube:                          {<<: *domain, path: ./rules/Youtube.mrs, url: "https://raw.githubusercontent.com/MetaCubeX/meta-rules-dat/meta/geo/geosite/youtube.mrs"}
+  Apple-TV:                         {<<: *domain, path: ./rules/Apple-TV.mrs, url: "https://raw.githubusercontent.com/MetaCubeX/meta-rules-dat/meta/geo/geosite/apple-tvplus.mrs"}
+  PayPal:                           {<<: *domain, path: ./rules/PayPal.mrs, url: "https://raw.githubusercontent.com/MetaCubeX/meta-rules-dat/meta/geo/geosite/paypal.mrs"}
+  Apple:                            {<<: *domain, path: ./rules/Apple.mrs, url: "https://raw.githubusercontent.com/MetaCubeX/meta-rules-dat/meta/geo/geosite/apple.mrs"}
+  Microsoft:                        {<<: *domain, path: ./rules/Microsoft.mrs, url: "https://raw.githubusercontent.com/MetaCubeX/meta-rules-dat/meta/geo/geosite/microsoft.mrs"}
+  Google:                           {<<: *domain, path: ./rules/Google.mrs, url: "https://raw.githubusercontent.com/MetaCubeX/meta-rules-dat/meta/geo/geosite/google.mrs"}
+  Tiktok:                           {<<: *domain, path: ./rules/Tiktok.mrs, url: "https://raw.githubusercontent.com/MetaCubeX/meta-rules-dat/meta/geo/geosite/tiktok.mrs"}
+  Netflix:                          {<<: *domain, path: ./rules/Netflix.mrs, url: "https://raw.githubusercontent.com/MetaCubeX/meta-rules-dat/meta/geo/geosite/netflix.mrs"}
+  Disney:                           {<<: *domain, path: ./rules/Disney.mrs, url: "https://raw.githubusercontent.com/MetaCubeX/meta-rules-dat/meta/geo/geosite/disney.mrs"}
+  Hbo:                              {<<: *domain, path: ./rules/Hbo.mrs, url: "https://raw.githubusercontent.com/MetaCubeX/meta-rules-dat/meta/geo/geosite/hbo.mrs"}
+  Primevideo:                       {<<: *domain, path: ./rules/Primevideo.mrs, url: "https://raw.githubusercontent.com/MetaCubeX/meta-rules-dat/meta/geo/geosite/primevideo.mrs"}
+  Category-Emby:                    {<<: *domain, path: ./rules/Category-Emby.mrs, url: "https://raw.githubusercontent.com/MetaCubeX/meta-rules-dat/meta/geo/geosite/category-emby.mrs"}
+  Spotify:                          {<<: *domain, path: ./rules/Spotify.mrs, url: "https://raw.githubusercontent.com/MetaCubeX/meta-rules-dat/meta/geo/geosite/spotify.mrs"}
+  Bahamut:                          {<<: *domain, path: ./rules/Bahamut.mrs, url: "https://raw.githubusercontent.com/MetaCubeX/meta-rules-dat/meta/geo/geosite/bahamut.mrs"}
+  Category-Games:                   {<<: *domain, path: ./rules/Category-Games.mrs, url: "https://raw.githubusercontent.com/MetaCubeX/meta-rules-dat/meta/geo/geosite/category-games.mrs"}
+  Category-Entertainment:           {<<: *domain, path: ./rules/Category-Entertainment.mrs, url: "https://raw.githubusercontent.com/MetaCubeX/meta-rules-dat/meta/geo/geosite/category-entertainment.mrs"}
+  Gfw:                              {<<: *domain, path: ./rules/Gfw.mrs, url: "https://raw.githubusercontent.com/MetaCubeX/meta-rules-dat/meta/geo/geosite/gfw.mrs"}
+  China:                            {<<: *domain, path: ./rules/China.mrs, url: "https://raw.githubusercontent.com/MetaCubeX/meta-rules-dat/meta/geo/geosite/cn.mrs"}
 
 # =========================================
 #             IP规则
 # =========================================
-  private_IP:                               {<<: *ip, path: ./rules/private_IP.mrs, url: "https://raw.githubusercontent.com/MetaCubeX/meta-rules-dat/meta/geo/geoip/private.mrs"}
-  Custom_Direct_IP:                         {<<: *ip, path: ./rules/Custom_Direct_IP.mrs, url: "https://raw.githubusercontent.com/Aethersailor/Custom_OpenClash_Rules/refs/heads/main/rule/Custom_Direct_IP.mrs"}
-  Custom_Proxy_IP:                          {<<: *ip, path: ./rules/Custom_Proxy_IP.mrs, url: "https://raw.githubusercontent.com/Aethersailor/Custom_OpenClash_Rules/refs/heads/main/rule/Custom_Proxy_IP.mrs"}
-  Steam_CDN_IP:                             {<<: *ip, path: ./rules/Steam_CDN_IP.mrs, url: "https://raw.githubusercontent.com/Aethersailor/Custom_OpenClash_Rules/refs/heads/main/rule/Steam_CDN_IP.mrs"}
-  telegram:                                 {<<: *ip, path: ./rules/telegram.mrs, url: "https://raw.githubusercontent.com/MetaCubeX/meta-rules-dat/meta/geo/geoip/telegram.mrs"}
-  twitter:                                  {<<: *ip, path: ./rules/twitter.mrs, url: "https://raw.githubusercontent.com/MetaCubeX/meta-rules-dat/meta/geo/geoip/twitter.mrs"}
-  facebook:                                 {<<: *ip, path: ./rules/facebook.mrs, url: "https://raw.githubusercontent.com/MetaCubeX/meta-rules-dat/meta/geo/geoip/facebook.mrs"}
-  google-ip:                                {<<: *ip, path: ./rules/google-ip.mrs, url: "https://raw.githubusercontent.com/MetaCubeX/meta-rules-dat/meta/geo/geoip/google.mrs"}
-  netflix-ip:                               {<<: *ip, path: ./rules/netflix-ip.mrs, url: "https://raw.githubusercontent.com/MetaCubeX/meta-rules-dat/meta/geo/geoip/netflix.mrs"}
-  cn-ip:                                    {<<: *ip, path: ./rules/cn-ip.mrs, url: "https://raw.githubusercontent.com/MetaCubeX/meta-rules-dat/meta/geo/geoip/cn.mrs"}
+  Private-IP:                       {<<: *ip, path: ./rules/Private-IP.mrs, url: "https://raw.githubusercontent.com/MetaCubeX/meta-rules-dat/meta/geo/geoip/private.mrs"}
+  Custom_Direct_IP:                 {<<: *ip, path: ./rules/Custom_Direct_IP.mrs, url: "https://raw.githubusercontent.com/Aethersailor/Custom_OpenClash_Rules/refs/heads/main/rule/Custom_Direct_IP.mrs"}
+  Custom_Proxy_IP:                  {<<: *ip, path: ./rules/Custom_Proxy_IP.mrs, url: "https://raw.githubusercontent.com/Aethersailor/Custom_OpenClash_Rules/refs/heads/main/rule/Custom_Proxy_IP.mrs"}
+  Steam_CDN_IP:                     {<<: *ip, path: ./rules/Steam_CDN_IP.mrs, url: "https://raw.githubusercontent.com/Aethersailor/Custom_OpenClash_Rules/refs/heads/main/rule/Steam_CDN_IP.mrs"}
+  Telegram:                         {<<: *ip, path: ./rules/Telegram.mrs, url: "https://raw.githubusercontent.com/MetaCubeX/meta-rules-dat/meta/geo/geoip/telegram.mrs"}
+  Twitter:                          {<<: *ip, path: ./rules/Twitter.mrs, url: "https://raw.githubusercontent.com/MetaCubeX/meta-rules-dat/meta/geo/geoip/twitter.mrs"}
+  Facebook:                         {<<: *ip, path: ./rules/Facebook.mrs, url: "https://raw.githubusercontent.com/MetaCubeX/meta-rules-dat/meta/geo/geoip/facebook.mrs"}
+  Google-IP:                        {<<: *ip, path: ./rules/Google-IP.mrs, url: "https://raw.githubusercontent.com/MetaCubeX/meta-rules-dat/meta/geo/geoip/google.mrs"}
+  Netflix-IP:                       {<<: *ip, path: ./rules/Netflix-IP.mrs, url: "https://raw.githubusercontent.com/MetaCubeX/meta-rules-dat/meta/geo/geoip/netflix.mrs"}
+  China-IP:                         {<<: *ip, path: ./rules/China-IP.mrs, url: "https://raw.githubusercontent.com/MetaCubeX/meta-rules-dat/meta/geo/geoip/cn.mrs"}
