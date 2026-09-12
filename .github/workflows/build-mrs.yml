@@ -51,6 +51,9 @@ jobs:
           DOMAIN_TYPES = {"DOMAIN", "DOMAIN-SUFFIX", "DOMAIN-KEYWORD"}
           IP_TYPES = {"IP-CIDR", "IP-CIDR6"}
 
+          DUMMY_DOMAIN = ["DOMAIN,dummy-placeholder-never-match.invalid"]
+          DUMMY_IP = ["0.0.0.0/32"]
+
           def clean_rule_line(raw_line):
               if "#" in raw_line:
                   raw_line = raw_line.split("#", 1)[0]
@@ -71,7 +74,7 @@ jobs:
               with open(yaml_file, "r", encoding="utf-8") as f:
                   data = yaml.safe_load(f) or {}
 
-              payload = data.get("payload", [])
+              payload = data.get("payload", []) or []
               yaml_domains = []
               yaml_ips = []
 
@@ -97,39 +100,33 @@ jobs:
               yaml_domains = deduplicate_keep_order(yaml_domains)
               yaml_ips = deduplicate_keep_order(yaml_ips)
 
-              # --- 处理域名规则（全量同步） ---
               domain_list_file = os.path.join(RULES_DIR, f"{base_name}_domain.list")
               domain_mrs_file = os.path.join(RULES_DIR, f"{base_name}_domain.mrs")
-              if yaml_domains:
-                  with open(domain_list_file, "w", encoding="utf-8") as f:
-                      f.write("\n".join(yaml_domains) + "\n")
-                  subprocess.run(
-                      ["mihomo", "convert-ruleset", "domain", "text", domain_list_file, domain_mrs_file],
-                      check=True
-                  )
-                  print(f"[Domain] Synced {domain_list_file} ({len(yaml_domains)} rules) -> {domain_mrs_file}")
-              else:
-                  # 如果 YAML 里把域名全部删除了，清理生成的旧文件
-                  for f in [domain_list_file, domain_mrs_file]:
-                      if os.path.exists(f):
-                          os.remove(f)
 
-              # --- 处理 IP 规则（全量同步） ---
+              domains_to_write = yaml_domains if yaml_domains else DUMMY_DOMAIN
+              with open(domain_list_file, "w", encoding="utf-8") as f:
+                  f.write("\n".join(domains_to_write) + "\n")
+              
+              subprocess.run(
+                  ["mihomo", "convert-ruleset", "domain", "text", domain_list_file, domain_mrs_file],
+                  check=True
+              )
+              status_domain = f"{len(yaml_domains)} rules" if yaml_domains else "cleared -> set dummy"
+              print(f"[Domain] {base_name}: {status_domain} -> {domain_mrs_file}")
+
               ip_list_file = os.path.join(RULES_DIR, f"{base_name}_ip.list")
               ip_mrs_file = os.path.join(RULES_DIR, f"{base_name}_ip.mrs")
-              if yaml_ips:
-                  with open(ip_list_file, "w", encoding="utf-8") as f:
-                      f.write("\n".join(yaml_ips) + "\n")
-                  subprocess.run(
-                      ["mihomo", "convert-ruleset", "ipcidr", "text", ip_list_file, ip_mrs_file],
-                      check=True
-                  )
-                  print(f"[IP] Synced {ip_list_file} ({len(yaml_ips)} rules) -> {ip_mrs_file}")
-              else:
-                  # 如果 YAML 里把 IP 全部删除了，清理生成的旧文件
-                  for f in [ip_list_file, ip_mrs_file]:
-                      if os.path.exists(f):
-                          os.remove(f)
+
+              ips_to_write = yaml_ips if yaml_ips else DUMMY_IP
+              with open(ip_list_file, "w", encoding="utf-8") as f:
+                  f.write("\n".join(ips_to_write) + "\n")
+              
+              subprocess.run(
+                  ["mihomo", "convert-ruleset", "ipcidr", "text", ip_list_file, ip_mrs_file],
+                  check=True
+              )
+              status_ip = f"{len(yaml_ips)} rules" if yaml_ips else "cleared -> set dummy"
+              print(f"[IP] {base_name}: {status_ip} -> {ip_mrs_file}")
           EOF
 
       - name: Commit and Push to Rules
