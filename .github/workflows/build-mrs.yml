@@ -1,4 +1,4 @@
-name: Update List and Build MRS Rules
+name: Sync List and Build MRS Rules
 
 on:
   push:
@@ -39,7 +39,7 @@ jobs:
           sudo mv "$BIN_NAME" /usr/local/bin/mihomo
           mihomo -v
 
-      - name: Append to List and Compile MRS
+      - name: Sync Rules and Compile MRS
         run: |
           python3 - << 'EOF'
           import os
@@ -56,25 +56,14 @@ jobs:
                   raw_line = raw_line.split("#", 1)[0]
               return raw_line.strip().strip("'\"")
 
-          def read_existing_list(file_path):
-              if not os.path.exists(file_path):
-                  return []
-              rules = []
-              with open(file_path, "r", encoding="utf-8") as f:
-                  for line in f:
-                      cleaned = clean_rule_line(line)
-                      if cleaned:
-                          rules.append(cleaned)
-              return rules
-
-          def merge_rules(existing_rules, new_rules):
-              seen = set(existing_rules)
-              merged = list(existing_rules)
-              for r in new_rules:
-                  if r not in seen:
-                      seen.add(r)
-                      merged.append(r)
-              return merged
+          def deduplicate_keep_order(items):
+              seen = set()
+              result = []
+              for item in items:
+                  if item not in seen:
+                      seen.add(item)
+                      result.append(item)
+              return result
 
           for yaml_file in glob.glob(f"{RULES_DIR}/*.yaml"):
               base_name = os.path.splitext(os.path.basename(yaml_file))[0]
@@ -97,70 +86,60 @@ jobs:
                   if rule_type in DOMAIN_TYPES:
                       yaml_domains.append(cleaned)
                   elif rule_type in IP_TYPES:
-                      # 提取纯 CIDR（去除 IP-CIDR, 前缀和 no-resolve）
                       if len(parts) >= 2:
                           cidr = parts[1]
-                          # 单个 IP 没有掩码时补齐 /32 或 /128
                           if "/" not in cidr:
                               cidr = f"{cidr}/128" if ":" in cidr else f"{cidr}/32"
                           yaml_ips.append(cidr)
                   elif "/" in cleaned or ":" in cleaned:
-                      # 兼容原本就没有前缀的纯 CIDR
                       yaml_ips.append(cleaned)
 
-              domain_list_file = os.path.join(RULES_DIR, f"{base_name}_domain.list")
-              existing_domains = read_existing_list(domain_list_file)
-              all_domains = merge_rules(existing_domains, yaml_domains)
+              yaml_domains = deduplicate_keep_order(yaml_domains)
+              yaml_ips = deduplicate_keep_order(yaml_ips)
 
-              if all_domains:
+              # --- 处理域名规则（全量同步） ---
+              domain_list_file = os.path.join(RULES_DIR, f"{base_name}_domain.list")
+              domain_mrs_file = os.path.join(RULES_DIR, f"{base_name}_domain.mrs")
+              if yaml_domains:
                   with open(domain_list_file, "w", encoding="utf-8") as f:
-                      f.write("\n".join(all_domains) + "\n")
-                  
-                  domain_mrs_file = os.path.join(RULES_DIR, f"{base_name}_domain.mrs")
+                      f.write("\n".join(yaml_domains) + "\n")
                   subprocess.run(
                       ["mihomo", "convert-ruleset", "domain", "text", domain_list_file, domain_mrs_file],
                       check=True
                   )
-                  print(f"[Domain] Updated {domain_list_file} (Total: {len(all_domains)}) -> Overwrote {domain_mrs_file}")
+                  print(f"[Domain] Synced {domain_list_file} ({len(yaml_domains)} rules) -> {domain_mrs_file}")
+              else:
+                  # 如果 YAML 里把域名全部删除了，清理生成的旧文件
+                  for f in [domain_list_file, domain_mrs_file]:
+                      if os.path.exists(f):
+                          os.remove(f)
 
+              # --- 处理 IP 规则（全量同步） ---
               ip_list_file = os.path.join(RULES_DIR, f"{base_name}_ip.list")
-              existing_ips = read_existing_list(ip_list_file)
-              
-              # 清洗已存在文件中可能残留的旧前缀
-              clean_existing_ips = []
-              for ip in existing_ips:
-                  p = [x.strip() for x in ip.split(",")]
-                  if p[0].upper() in IP_TYPES and len(p) >= 2:
-                      clean_existing_ips.append(p[1])
-                  else:
-                      clean_existing_ips.append(ip)
-
-              all_ips = merge_rules(clean_existing_ips, yaml_ips)
-
-              if all_ips:
+              ip_mrs_file = os.path.join(RULES_DIR, f"{base_name}_ip.mrs")
+              if yaml_ips:
                   with open(ip_list_file, "w", encoding="utf-8") as f:
-                      f.write("\n".join(all_ips) + "\n")
-                  
-                  ip_mrs_file = os.path.join(RULES_DIR, f"{base_name}_ip.mrs")
-                  try:
-                      subprocess.run(
-                          ["mihomo", "convert-ruleset", "ipcidr", "text", ip_list_file, ip_mrs_file],
-                          check=True
-                      )
-                      print(f"[IP] Updated {ip_list_file} (Total: {len(all_ips)}) -> Overwrote {ip_mrs_file}")
-                  except subprocess.CalledProcessError as e:
-                      print(f"[Error] Failed to compile {ip_mrs_file}: {e}")
-                      raise e
+                      f.write("\n".join(yaml_ips) + "\n")
+                  subprocess.run(
+                      ["mihomo", "convert-ruleset", "ipcidr", "text", ip_list_file, ip_mrs_file],
+                      check=True
+                  )
+                  print(f"[IP] Synced {ip_list_file} ({len(yaml_ips)} rules) -> {ip_mrs_file}")
+              else:
+                  # 如果 YAML 里把 IP 全部删除了，清理生成的旧文件
+                  for f in [ip_list_file, ip_mrs_file]:
+                      if os.path.exists(f):
+                          os.remove(f)
           EOF
 
       - name: Commit and Push to Rules
         run: |
           git config --global user.name "github-actions[bot]"
           git config --global user.email "github-actions[bot]@users.noreply.github.com"
-          git add Rules/*.list Rules/*.mrs
+          git add -A Rules/*.list Rules/*.mrs
           if git diff --staged --quiet; then
             echo "No changes in .list or .mrs files."
           else
-            git commit -m "Auto-append rules to list and overwrite MRS [skip ci]"
+            git commit -m "Auto-sync rules to list and overwrite MRS [skip ci]"
             git push
           fi

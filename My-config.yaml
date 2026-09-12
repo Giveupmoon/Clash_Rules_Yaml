@@ -496,6 +496,7 @@ proxy-groups:
 # =========================================
 rules:
   - AND,((NETWORK,UDP),(DST-PORT,443),(NOT,((OR,((RULE-SET,China),(RULE-SET,China-IP,no-resolve)))))),REJECT
+  - RULE-SET,Giveup-Direct-IP,全球直连
   - RULE-SET,Private,全球直连
   - RULE-SET,Private-IP,全球直连,no-resolve
   - RULE-SET,Custom_Direct_Domain,全球直连
@@ -556,12 +557,12 @@ rule-providers:
 
   Custom_Direct_Domain:
     <<: *domain
-    url: "https://raw.githubusercontent.com/Aethersailor/Custom_OpenClash_Rules/refs/heads/main/rule/Custom_Direct_Domain.mrs"
+    url: "https://raw.githubusercontent.com/Aethersailor/Custom_OpenClash_Rules/main/rule/Custom_Direct_Domain.mrs"
     path: ./rules/Custom_Direct_Domain.mrs
 
   Custom_Proxy_Domain:
     <<: *domain
-    url: "https://raw.githubusercontent.com/Aethersailor/Custom_OpenClash_Rules/refs/heads/main/rule/Custom_Proxy_Domain.mrs"
+    url: "https://raw.githubusercontent.com/Aethersailor/Custom_OpenClash_Rules/main/rule/Custom_Proxy_Domain.mrs"
     path: ./rules/Custom_Proxy_Domain.mrs
 
   Google-cn:
@@ -576,7 +577,7 @@ rule-providers:
 
   Steam_CDN_Domain:
     <<: *domain
-    url: "https://raw.githubusercontent.com/Aethersailor/Custom_OpenClash_Rules/refs/heads/main/rule/Steam_CDN_Domain.mrs"
+    url: "https://raw.githubusercontent.com/Aethersailor/Custom_OpenClash_Rules/main/rule/Steam_CDN_Domain.mrs"
     path: ./rules/Steam_CDN_Domain.mrs
 
   Category-Game-Platforms-Download:
@@ -729,17 +730,17 @@ rule-providers:
 
   Custom_Direct_IP:
     <<: *ip
-    url: "https://raw.githubusercontent.com/Aethersailor/Custom_OpenClash_Rules/refs/heads/main/rule/Custom_Direct_IP.mrs"
+    url: "https://raw.githubusercontent.com/Aethersailor/Custom_OpenClash_Rules/main/rule/Custom_Direct_IP.mrs"
     path: ./rules/Custom_Direct_IP.mrs
 
   Custom_Proxy_IP:
     <<: *ip
-    url: "https://raw.githubusercontent.com/Aethersailor/Custom_OpenClash_Rules/refs/heads/main/rule/Custom_Proxy_IP.mrs"
+    url: "https://raw.githubusercontent.com/Aethersailor/Custom_OpenClash_Rules/main/rule/Custom_Proxy_IP.mrs"
     path: ./rules/Custom_Proxy_IP.mrs
 
   Steam_CDN_IP:
     <<: *ip
-    url: "https://raw.githubusercontent.com/Aethersailor/Custom_OpenClash_Rules/refs/heads/main/rule/Steam_CDN_IP.mrs"
+    url: "https://raw.githubusercontent.com/Aethersailor/Custom_OpenClash_Rules/main/rule/Steam_CDN_IP.mrs"
     path: ./rules/Steam_CDN_IP.mrs
 
   Telegram:
@@ -771,3 +772,8 @@ rule-providers:
     <<: *ip
     url: "https://raw.githubusercontent.com/MetaCubeX/meta-rules-dat/meta/geo/geoip/cn.mrs"
     path: ./rules/China-IP.mrs
+
+  Giveup-Direct-IP:
+    <<: *ip
+    url: "https://raw.githubusercontent.com/Giveupmoon/Clash_Rules_Yaml/main/Rules/Giveup_Direct_ip.mrs"
+    path: ./rules/Giveup_Direct_IP.mrs

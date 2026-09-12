@@ -243,11 +243,11 @@ rule-providers:
 #             域名规则
 # =========================================
   Private:                          {<<: *domain, path: ./rules/Private.mrs, url: "https://raw.githubusercontent.com/MetaCubeX/meta-rules-dat/meta/geo/geosite/private.mrs"}
-  Custom_Direct_Domain:             {<<: *domain, path: ./rules/Custom_Direct_Domain.mrs, url: "https://raw.githubusercontent.com/Aethersailor/Custom_OpenClash_Rules/refs/heads/main/rule/Custom_Direct_Domain.mrs"}
-  Custom_Proxy_Domain:              {<<: *domain, path: ./rules/Custom_Proxy_Domain.mrs, url: "https://raw.githubusercontent.com/Aethersailor/Custom_OpenClash_Rules/refs/heads/main/rule/Custom_Proxy_Domain.mrs"}
+  Custom_Direct_Domain:             {<<: *domain, path: ./rules/Custom_Direct_Domain.mrs, url: "https://raw.githubusercontent.com/Aethersailor/Custom_OpenClash_Rules/main/rule/Custom_Direct_Domain.mrs"}
+  Custom_Proxy_Domain:              {<<: *domain, path: ./rules/Custom_Proxy_Domain.mrs, url: "https://raw.githubusercontent.com/Aethersailor/Custom_OpenClash_Rules/main/rule/Custom_Proxy_Domain.mrs"}
   Google-cn:                        {<<: *domain, path: ./rules/Google-cn.mrs, url: "https://raw.githubusercontent.com/MetaCubeX/meta-rules-dat/meta/geo/geosite/google-cn.mrs"}
   Category-Games-cn:                {<<: *domain, path: ./rules/Category-Games-cn.mrs, url: "https://raw.githubusercontent.com/MetaCubeX/meta-rules-dat/meta/geo/geosite/category-games@cn.mrs"}
-  Steam_CDN_Domain:                 {<<: *domain, path: ./rules/Steam_CDN_Domain.mrs, url: "https://raw.githubusercontent.com/Aethersailor/Custom_OpenClash_Rules/refs/heads/main/rule/Steam_CDN_Domain.mrs"}
+  Steam_CDN_Domain:                 {<<: *domain, path: ./rules/Steam_CDN_Domain.mrs, url: "https://raw.githubusercontent.com/Aethersailor/Custom_OpenClash_Rules/main/rule/Steam_CDN_Domain.mrs"}
   Category-Game-Platforms-Download: {<<: *domain, path: ./rules/Category-Game-Platforms-Download.mrs, url: "https://raw.githubusercontent.com/MetaCubeX/meta-rules-dat/meta/geo/geosite/category-game-platforms-download.mrs"}
   Category-Public-Tracker:          {<<: *domain, path: ./rules/Category-Public-Tracker.mrs, url: "https://raw.githubusercontent.com/MetaCubeX/meta-rules-dat/meta/geo/geosite/category-public-tracker.mrs"}
   Category-Communication:           {<<: *domain, path: ./rules/Category-Communication.mrs, url: "https://raw.githubusercontent.com/MetaCubeX/meta-rules-dat/meta/geo/geosite/category-communication.mrs"}
@@ -281,9 +281,9 @@ rule-providers:
 #             IP规则
 # =========================================
   Private-IP:                       {<<: *ip, path: ./rules/Private-IP.mrs, url: "https://raw.githubusercontent.com/MetaCubeX/meta-rules-dat/meta/geo/geoip/private.mrs"}
-  Custom_Direct_IP:                 {<<: *ip, path: ./rules/Custom_Direct_IP.mrs, url: "https://raw.githubusercontent.com/Aethersailor/Custom_OpenClash_Rules/refs/heads/main/rule/Custom_Direct_IP.mrs"}
-  Custom_Proxy_IP:                  {<<: *ip, path: ./rules/Custom_Proxy_IP.mrs, url: "https://raw.githubusercontent.com/Aethersailor/Custom_OpenClash_Rules/refs/heads/main/rule/Custom_Proxy_IP.mrs"}
-  Steam_CDN_IP:                     {<<: *ip, path: ./rules/Steam_CDN_IP.mrs, url: "https://raw.githubusercontent.com/Aethersailor/Custom_OpenClash_Rules/refs/heads/main/rule/Steam_CDN_IP.mrs"}
+  Custom_Direct_IP:                 {<<: *ip, path: ./rules/Custom_Direct_IP.mrs, url: "https://raw.githubusercontent.com/Aethersailor/Custom_OpenClash_Rules/main/rule/Custom_Direct_IP.mrs"}
+  Custom_Proxy_IP:                  {<<: *ip, path: ./rules/Custom_Proxy_IP.mrs, url: "https://raw.githubusercontent.com/Aethersailor/Custom_OpenClash_Rules/main/rule/Custom_Proxy_IP.mrs"}
+  Steam_CDN_IP:                     {<<: *ip, path: ./rules/Steam_CDN_IP.mrs, url: "https://raw.githubusercontent.com/Aethersailor/Custom_OpenClash_Rules/main/rule/Steam_CDN_IP.mrs"}
   Telegram:                         {<<: *ip, path: ./rules/Telegram.mrs, url: "https://raw.githubusercontent.com/MetaCubeX/meta-rules-dat/meta/geo/geoip/telegram.mrs"}
   Twitter:                          {<<: *ip, path: ./rules/Twitter.mrs, url: "https://raw.githubusercontent.com/MetaCubeX/meta-rules-dat/meta/geo/geoip/twitter.mrs"}
   Facebook:                         {<<: *ip, path: ./rules/Facebook.mrs, url: "https://raw.githubusercontent.com/MetaCubeX/meta-rules-dat/meta/geo/geoip/facebook.mrs"}
