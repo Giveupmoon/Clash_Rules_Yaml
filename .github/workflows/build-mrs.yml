@@ -54,11 +54,6 @@ jobs:
           DUMMY_DOMAIN = ["DOMAIN,dummy-placeholder-never-match.invalid"]
           DUMMY_IP = ["0.0.0.0/32"]
 
-          def clean_rule_line(raw_line):
-              if "#" in raw_line:
-                  raw_line = raw_line.split("#", 1)[0]
-              return raw_line.strip().strip("'\"")
-
           def deduplicate_keep_order(items):
               seen = set()
               result = []
@@ -79,27 +74,28 @@ jobs:
               yaml_ips = []
 
               for item in payload:
-                  cleaned = clean_rule_line(str(item))
-                  if not cleaned:
+                  raw = str(item).strip().strip("'\"")
+                  if not raw:
                       continue
 
-                  parts = [p.strip() for p in cleaned.split(",")]
+                  parts = [p.strip() for p in raw.split(",")]
                   rule_type = parts[0].upper()
 
                   if rule_type in DOMAIN_TYPES:
-                      yaml_domains.append(cleaned)
+                      yaml_domains.append(raw)
                   elif rule_type in IP_TYPES:
                       if len(parts) >= 2:
                           cidr = parts[1]
                           if "/" not in cidr:
                               cidr = f"{cidr}/128" if ":" in cidr else f"{cidr}/32"
                           yaml_ips.append(cidr)
-                  elif "/" in cleaned or ":" in cleaned:
-                      yaml_ips.append(cleaned)
+                  elif "/" in raw or ":" in raw:
+                      yaml_ips.append(raw)
 
               yaml_domains = deduplicate_keep_order(yaml_domains)
               yaml_ips = deduplicate_keep_order(yaml_ips)
 
+              # --- 处理域名规则 ---
               domain_list_file = os.path.join(RULES_DIR, f"{base_name}_domain.list")
               domain_mrs_file = os.path.join(RULES_DIR, f"{base_name}_domain.mrs")
 
@@ -114,6 +110,7 @@ jobs:
               status_domain = f"{len(yaml_domains)} rules" if yaml_domains else "cleared -> set dummy"
               print(f"[Domain] {base_name}: {status_domain} -> {domain_mrs_file}")
 
+              # --- 处理 IP 规则 ---
               ip_list_file = os.path.join(RULES_DIR, f"{base_name}_ip.list")
               ip_mrs_file = os.path.join(RULES_DIR, f"{base_name}_ip.mrs")
 
