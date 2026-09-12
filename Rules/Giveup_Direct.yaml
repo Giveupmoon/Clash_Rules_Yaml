@@ -4,3 +4,4 @@ payload:
 - 'IP-CIDR,10.0.0.0/8 # 局域网IP'
 - 'IP-CIDR6,fc00::/7 # 局域网'
 - 'IP-CIDR6,::/127 # 局域网'
+- 'IP-CIDR6,fe80::/10 # 局域网'
