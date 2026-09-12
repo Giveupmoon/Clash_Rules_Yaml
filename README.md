@@ -77,7 +77,7 @@ proxy-providers:
 
 ## 📜 鸣谢与规则来源
 
-* 适配内核：[MetaCubeX/mihimo](https://www.google.com/search?q=https://github.com/MetaCubeX/mihomo)
+* 适配内核：[MetaCubeX/mihomo](https://www.google.com/search?q=https://github.com/MetaCubeX/mihomo)
 * 规则数据集：[MetaCubeX/meta-rules-dat](https://github.com/MetaCubeX/meta-rules-dat)
 * 社区规则补充：[Aethersailor/Custom_OpenClash_Rules](https://github.com/Aethersailor/Custom_OpenClash_Rules)
 * Web 面板：[Zephyruso/zashboard](https://github.com/Zephyruso/zashboard)
