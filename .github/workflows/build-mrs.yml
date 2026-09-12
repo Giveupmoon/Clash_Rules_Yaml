@@ -31,10 +31,12 @@ jobs:
         env:
           GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         run: |
-          gh release download --repo MetaCubeX/mihomo --pattern "mihomo-linux-amd64-*.gz"
-          gzip -d mihomo-linux-amd64-*.gz
-          chmod +x mihomo-linux-amd64-*
-          sudo mv mihomo-linux-amd64-* /usr/local/bin/mihomo
+          gh release download --repo MetaCubeX/mihomo --pattern "mihomo-linux-amd64-v*.gz"
+          FILE=$(ls mihomo-linux-amd64-v*.gz | grep -v "compatible" | head -n 1)
+          gzip -d "$FILE"
+          BIN_NAME="${FILE%.gz}"
+          chmod +x "$BIN_NAME"
+          sudo mv "$BIN_NAME" /usr/local/bin/mihomo
           mihomo -v
 
       - name: Append to List and Compile MRS
