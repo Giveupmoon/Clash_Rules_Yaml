@@ -1,2 +1,3 @@
 payload:
-- 'DOMAIN-SUFFIX,giveup.top' #个人主站
+  - 'DOMAIN-SUFFIX,giveup.top' # 个人主站
+  - 'DOMAIN-KEYWORD,www.giveup.top' # 111
