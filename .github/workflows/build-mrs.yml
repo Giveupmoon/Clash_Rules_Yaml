@@ -97,8 +97,16 @@ jobs:
                   if rule_type in DOMAIN_TYPES:
                       yaml_domains.append(cleaned)
                   elif rule_type in IP_TYPES:
-                      clean_ip_rule = ",".join(parts)
-                      yaml_ips.append(clean_ip_rule)
+                      # 提取纯 CIDR（去除 IP-CIDR, 前缀和 no-resolve）
+                      if len(parts) >= 2:
+                          cidr = parts[1]
+                          # 单个 IP 没有掩码时补齐 /32 或 /128
+                          if "/" not in cidr:
+                              cidr = f"{cidr}/128" if ":" in cidr else f"{cidr}/32"
+                          yaml_ips.append(cidr)
+                  elif "/" in cleaned or ":" in cleaned:
+                      # 兼容原本就没有前缀的纯 CIDR
+                      yaml_ips.append(cleaned)
 
               domain_list_file = os.path.join(RULES_DIR, f"{base_name}_domain.list")
               existing_domains = read_existing_list(domain_list_file)
@@ -117,7 +125,17 @@ jobs:
 
               ip_list_file = os.path.join(RULES_DIR, f"{base_name}_ip.list")
               existing_ips = read_existing_list(ip_list_file)
-              all_ips = merge_rules(existing_ips, yaml_ips)
+              
+              # 清洗已存在文件中可能残留的旧前缀
+              clean_existing_ips = []
+              for ip in existing_ips:
+                  p = [x.strip() for x in ip.split(",")]
+                  if p[0].upper() in IP_TYPES and len(p) >= 2:
+                      clean_existing_ips.append(p[1])
+                  else:
+                      clean_existing_ips.append(ip)
+
+              all_ips = merge_rules(clean_existing_ips, yaml_ips)
 
               if all_ips:
                   with open(ip_list_file, "w", encoding="utf-8") as f:
