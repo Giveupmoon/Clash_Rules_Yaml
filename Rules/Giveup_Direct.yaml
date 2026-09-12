@@ -1,9 +1,2 @@
 payload:
 - 'DOMAIN-SUFFIX,giveup.top # 个人域名'
-- 'IP-CIDR,0.0.0.0/8 # 局域网IP'
-- 'IP-CIDR,10.0.0.0/8 # 局域网IP'
-- 'IP-CIDR6,fc00::/7 # 局域网'
-- 'IP-CIDR6,::/127 # 局域网'
-- 'IP-CIDR6,fe80::/10 # 局域网'
-- 'IP-CIDR6,ff00::/8 # 局域网'
-- 'IP-CIDR,0.0.0.1/32 # 局域网'
