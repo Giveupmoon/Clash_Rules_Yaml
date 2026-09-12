@@ -10,8 +10,8 @@
 
 * ⚡ **高性能 MRS 规则**：全面采用 Meta 二进制规则集（`format: mrs`），显著降低规则解析内存占用，毫秒级加载。
 * 🎯 **精准分流设计**：内置 AI 服务（ChatGPT/Gemini）、流媒体平台（YouTube/Netflix/Disney+）、游戏平台与国外媒体的细分策略组。
-* 🛡️ **TUN & 透明代理优化**：适配路由环境的 TUN 混合模式（Mixed Stack）与流量嗅探（Sniffer），支持端点独立 NAT 与 Fake-IP 防污染。
-* 🎨 **策略组视觉美化**：内置自托管与社区精选应用图标，仪表盘（Zashboard/Metacubexd）展示清晰统一。
+* 🛡️ **TUN & 透明代理优化**：适配路由环境的 TUN 虚拟网卡代理与流量嗅探（Sniffer），支持端点独立 NAT 与 Fake-IP 防污染。
+* 🎨 **策略组视觉美化**：内置自托管与社区精选应用图标，仪表盘（Zashboard）展示清晰统一。
 * 🧩 **锚点模块化**：高度复用 YAML 锚点（Anchors），便于快速调整订阅筛选正则与策略排序。
 
 ---
@@ -77,7 +77,7 @@ proxy-providers:
 
 ## 📜 鸣谢与规则来源
 
-* 内核引擎：[MetaCubeX/Clash](https://www.google.com/search?q=https://github.com/MetaCubeX/Clash)
+* 适配内核：[MetaCubeX/mihimo](https://www.google.com/search?q=https://github.com/MetaCubeX/mihomo)
 * 规则数据集：[MetaCubeX/meta-rules-dat](https://github.com/MetaCubeX/meta-rules-dat)
 * 社区规则补充：[Aethersailor/Custom_OpenClash_Rules](https://github.com/Aethersailor/Custom_OpenClash_Rules)
 * Web 面板：[Zephyruso/zashboard](https://github.com/Zephyruso/zashboard)
