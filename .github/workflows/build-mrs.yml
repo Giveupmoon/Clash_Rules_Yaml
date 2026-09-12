@@ -49,15 +49,23 @@ jobs:
           DOMAIN_TYPES = {"DOMAIN", "DOMAIN-SUFFIX", "DOMAIN-KEYWORD"}
           IP_TYPES = {"IP-CIDR", "IP-CIDR6"}
 
+          def clean_rule_line(raw_line):
+              if "#" in raw_line:
+                  raw_line = raw_line.split("#", 1)[0]
+              return raw_line.strip().strip("'\"")
+
           def read_existing_list(file_path):
-              """读取已有 list 文件并按行保存在集合中，保留已有行"""
               if not os.path.exists(file_path):
                   return []
+              rules = []
               with open(file_path, "r", encoding="utf-8") as f:
-                  return [line.strip() for line in f if line.strip() and not line.strip().startswith("#")]
+                  for line in f:
+                      cleaned = clean_rule_line(line)
+                      if cleaned:
+                          rules.append(cleaned)
+              return rules
 
           def merge_rules(existing_rules, new_rules):
-              """保持原有顺序并追加去重"""
               seen = set(existing_rules)
               merged = list(existing_rules)
               for r in new_rules:
@@ -77,19 +85,19 @@ jobs:
               yaml_ips = []
 
               for item in payload:
-                  raw = item.strip().strip("'\"")
-                  if not raw or raw.startswith("#"):
+                  cleaned = clean_rule_line(str(item))
+                  if not cleaned:
                       continue
 
-                  parts = [p.strip() for p in raw.split(",")]
+                  parts = [p.strip() for p in cleaned.split(",")]
                   rule_type = parts[0].upper()
 
                   if rule_type in DOMAIN_TYPES:
-                      yaml_domains.append(raw)
+                      yaml_domains.append(cleaned)
                   elif rule_type in IP_TYPES:
-                      yaml_ips.append(raw)
+                      clean_ip_rule = ",".join(parts)
+                      yaml_ips.append(clean_ip_rule)
 
-              # --- 处理域名规则 (.list & .mrs) ---
               domain_list_file = os.path.join(RULES_DIR, f"{base_name}_domain.list")
               existing_domains = read_existing_list(domain_list_file)
               all_domains = merge_rules(existing_domains, yaml_domains)
@@ -99,14 +107,12 @@ jobs:
                       f.write("\n".join(all_domains) + "\n")
                   
                   domain_mrs_file = os.path.join(RULES_DIR, f"{base_name}_domain.mrs")
-                  # 重新编译并直接覆盖原有的 .mrs
                   subprocess.run(
                       ["mihomo", "convert-ruleset", "domain", "text", domain_list_file, domain_mrs_file],
                       check=True
                   )
                   print(f"[Domain] Updated {domain_list_file} (Total: {len(all_domains)}) -> Overwrote {domain_mrs_file}")
 
-              # --- 处理 IP 规则 (.list & .mrs) ---
               ip_list_file = os.path.join(RULES_DIR, f"{base_name}_ip.list")
               existing_ips = read_existing_list(ip_list_file)
               all_ips = merge_rules(existing_ips, yaml_ips)
@@ -116,12 +122,15 @@ jobs:
                       f.write("\n".join(all_ips) + "\n")
                   
                   ip_mrs_file = os.path.join(RULES_DIR, f"{base_name}_ip.mrs")
-                  # 重新编译并直接覆盖原有的 .mrs
-                  subprocess.run(
-                      ["mihomo", "convert-ruleset", "ipcidr", "text", ip_list_file, ip_mrs_file],
-                      check=True
-                  )
-                  print(f"[IP] Updated {ip_list_file} (Total: {len(all_ips)}) -> Overwrote {ip_mrs_file}")
+                  try:
+                      subprocess.run(
+                          ["mihomo", "convert-ruleset", "ipcidr", "text", ip_list_file, ip_mrs_file],
+                          check=True
+                      )
+                      print(f"[IP] Updated {ip_list_file} (Total: {len(all_ips)}) -> Overwrote {ip_mrs_file}")
+                  except subprocess.CalledProcessError as e:
+                      print(f"[Error] Failed to compile {ip_mrs_file}: {e}")
+                      raise e
           EOF
 
       - name: Commit and Push to Rules
@@ -130,7 +139,7 @@ jobs:
           git config --global user.email "github-actions[bot]@users.noreply.github.com"
           git add Rules/*.list Rules/*.mrs
           if git diff --staged --quiet; then
-            echo "No changes in .list or .mrs files."
+            echo "No changes to commit."
           else
             git commit -m "Auto-append rules to list and overwrite MRS [skip ci]"
             git push
