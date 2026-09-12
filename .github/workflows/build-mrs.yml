@@ -1,0 +1,137 @@
+name: Update List and Build MRS Rules
+
+on:
+  push:
+    paths:
+      - 'Rules/*.yaml'
+      - '.github/workflows/build-mrs.yml'
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+
+      - name: Install dependencies
+        run: |
+          pip install pyyaml
+
+      - name: Install Mihomo
+        run: |
+          LATEST_TAG=$(curl -sSL "https://api.github.com/repos/MetaCubeX/mihomo/releases/latest" | grep '"tag_name":' | sed -E 's/.*"([^"]+)".*/\1/')
+          DOWNLOAD_URL=$(curl -sSL "https://api.github.com/repos/MetaCubeX/mihomo/releases/latest" | grep -o "https://github.com/MetaCubeX/mihomo/releases/download/$LATEST_TAG/mihomo-linux-amd64-$LATEST_TAG.gz" | head -n 1)
+          curl -sSL -o mihomo.gz "$DOWNLOAD_URL"
+          gzip -d mihomo.gz
+          chmod +x mihomo
+          sudo mv mihomo /usr/local/bin/mihomo
+          mihomo -v
+
+      - name: Append to List and Compile MRS
+        run: |
+          python3 - << 'EOF'
+          import os
+          import glob
+          import subprocess
+          import yaml
+
+          RULES_DIR = "Rules"
+          DOMAIN_TYPES = {"DOMAIN", "DOMAIN-SUFFIX", "DOMAIN-KEYWORD"}
+          IP_TYPES = {"IP-CIDR", "IP-CIDR6"}
+
+          def read_existing_list(file_path):
+              """读取已有 list 文件并按行保存在集合中，保留已有行"""
+              if not os.path.exists(file_path):
+                  return []
+              with open(file_path, "r", encoding="utf-8") as f:
+                  return [line.strip() for line in f if line.strip() and not line.strip().startswith("#")]
+
+          def merge_rules(existing_rules, new_rules):
+              """保持原有顺序并追加去重"""
+              seen = set(existing_rules)
+              merged = list(existing_rules)
+              for r in new_rules:
+                  if r not in seen:
+                      seen.add(r)
+                      merged.append(r)
+              return merged
+
+          for yaml_file in glob.glob(f"{RULES_DIR}/*.yaml"):
+              base_name = os.path.splitext(os.path.basename(yaml_file))[0]
+
+              with open(yaml_file, "r", encoding="utf-8") as f:
+                  data = yaml.safe_load(f) or {}
+
+              payload = data.get("payload", [])
+              yaml_domains = []
+              yaml_ips = []
+
+              for item in payload:
+                  raw = item.strip().strip("'\"")
+                  if not raw or raw.startswith("#"):
+                      continue
+
+                  parts = [p.strip() for p in raw.split(",")]
+                  rule_type = parts[0].upper()
+
+                  if rule_type in DOMAIN_TYPES:
+                      yaml_domains.append(raw)
+                  elif rule_type in IP_TYPES:
+                      yaml_ips.append(raw)
+
+              # --- 处理域名规则 (.list & .mrs) ---
+              domain_list_file = os.path.join(RULES_DIR, f"{base_name}_domain.list")
+              existing_domains = read_existing_list(domain_list_file)
+              all_domains = merge_rules(existing_domains, yaml_domains)
+
+              if all_domains:
+                  with open(domain_list_file, "w", encoding="utf-8") as f:
+                      f.write("\n".join(all_domains) + "\n")
+                  
+                  domain_mrs_file = os.path.join(RULES_DIR, f"{base_name}_domain.mrs")
+                  # 重新编译并直接覆盖原有的 .mrs
+                  subprocess.run(
+                      ["mihomo", "convert-ruleset", "domain", "text", domain_list_file, domain_mrs_file],
+                      check=True
+                  )
+                  print(f"[Domain] Updated {domain_list_file} (Total: {len(all_domains)}) -> Overwrote {domain_mrs_file}")
+
+              # --- 处理 IP 规则 (.list & .mrs) ---
+              ip_list_file = os.path.join(RULES_DIR, f"{base_name}_ip.list")
+              existing_ips = read_existing_list(ip_list_file)
+              all_ips = merge_rules(existing_ips, yaml_ips)
+
+              if all_ips:
+                  with open(ip_list_file, "w", encoding="utf-8") as f:
+                      f.write("\n".join(all_ips) + "\n")
+                  
+                  ip_mrs_file = os.path.join(RULES_DIR, f"{base_name}_ip.mrs")
+                  # 重新编译并直接覆盖原有的 .mrs
+                  subprocess.run(
+                      ["mihomo", "convert-ruleset", "ipcidr", "text", ip_list_file, ip_mrs_file],
+                      check=True
+                  )
+                  print(f"[IP] Updated {ip_list_file} (Total: {len(all_ips)}) -> Overwrote {ip_mrs_file}")
+          EOF
+
+      - name: Commit and Push to Rules
+        run: |
+          git config --global user.name "github-actions[bot]"
+          git config --global user.email "github-actions[bot]@users.noreply.github.com"
+          git add Rules/*.list Rules/*.mrs
+          if git diff --staged --quiet; then
+            echo "No changes in .list or .mrs files."
+          else
+            git commit -m "Auto-append rules to list and overwrite MRS [skip ci]"
+            git push
+          fi
