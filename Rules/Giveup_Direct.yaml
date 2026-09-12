@@ -1,4 +1,3 @@
 payload:
-- 'IP-CIDR,0.0.0.1/32 # 未知IP绕过内核'
 - 'DOMAIN-SUFFIX,giveup.top # 个人域名'
 - 'IP-CIDR,0.0.0.0/8 # 局域网IP'
