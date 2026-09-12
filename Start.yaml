@@ -277,6 +277,41 @@ tun:
     - China-IP
 
 # =========================================
+#                 DNS 配置
+# =========================================
+dns:
+  # 启用 DNS 功能
+  enable: true
+  # 支持 IPv6
+  ipv6: true
+  # 启用 Fake-IP
+  enhanced-mode: fake-ip
+  # IPv4 Fake-IP 网段
+  fake-ip-range: 198.18.0.1/16
+  # DNS 监听地址和端口
+  listen: 0.0.0.0:1053
+  # 是否遵循DNS规则
+  respect-rules: false
+  # Fake-IP 黑名单模式
+  fake-ip-filter-mode: blacklist
+  # DNS 上游服务器（用于国内域名解析）
+  nameserver:
+    - https://doh.pub/dns-query
+    - https://dns.alidns.com/dns-query
+  # 默认DNS服务器 （用于解析上游Doh和兜底解析）
+  default-nameserver:
+    - https://223.5.5.5/dns-query
+    - tls://1.1.1.1:853
+  # fake-ip 黑名单列表 (列表内的域名解析将返回真实ip)
+  fake-ip-filter:
+    - "*.lan"
+    - "*.local"
+    - "*.home"
+    - "*.arpa"
+    - rule-set:China
+    - rule-set:Private
+
+# =========================================
 #                 流量嗅探
 # =========================================
 sniffer:
@@ -314,41 +349,6 @@ sniffer:
 hosts:
   'services.googleapis.cn':
     - 'services.googleapis.com'
-
-# =========================================
-#                 DNS 配置
-# =========================================
-dns:
-  # 启用 DNS 功能
-  enable: true
-  # 支持 IPv6
-  ipv6: true
-  # 启用 Fake-IP
-  enhanced-mode: fake-ip
-  # IPv4 Fake-IP 网段
-  fake-ip-range: 198.18.0.1/16
-  # DNS 监听地址和端口
-  listen: 0.0.0.0:1053
-  # 是否遵循DNS规则
-  respect-rules: false
-  # Fake-IP 黑名单模式
-  fake-ip-filter-mode: blacklist
-  # DNS 上游服务器（用于国内域名解析）
-  nameserver:
-    - https://doh.pub/dns-query
-    - https://dns.alidns.com/dns-query
-  # 默认DNS服务器 （用于解析上游Doh和兜底解析）
-  default-nameserver:
-    - https://223.5.5.5/dns-query
-    - tls://1.1.1.1:853
-  # fake-ip 黑名单列表 (列表内的域名解析将返回真实ip)
-  fake-ip-filter:
-    - "*.lan"
-    - "*.local"
-    - "*.home"
-    - "*.arpa"
-    - rule-set:China
-    - rule-set:Private
 
 # =========================================
 #             策略组配置

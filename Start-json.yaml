@@ -96,6 +96,27 @@ tun:
   route-exclude-address-set:        [China-IP]                                                                                  # 绕过IP
 
 # =========================================
+#                 DNS 配置
+# =========================================
+dns:
+  enable:                           true                                                                                        # 启用 DNS 功能 
+  ipv6:                             true                                                                                        # 支持 IPv6
+  enhanced-mode:                    fake-ip                                                                                     # 启用 Fake-IP
+  fake-ip-range:                    198.18.0.1/16                                                                               # IPv4 Fake-IP 网段
+  listen:                           0.0.0.0:1053                                                                                # DNS 监听地址和端口
+  respect-rules:                    false                                                                                       # 是否遵循DNS规则
+  fake-ip-filter-mode:              blacklist                                                                                   # Fake-IP 黑名单
+  nameserver: [https://doh.pub/dns-query, https://dns.alidns.com/dns-query]                                                     # DNS 上游服务器（用于国内域名解析）
+  default-nameserver: [https://223.5.5.5/dns-query, tls://1.1.1.1:853]                                                          # 默认DNS服务器 （用于解析上游Doh和兜底解析）
+  fake-ip-filter:                                                                                                               # fake-ip 黑名单列表 (列表内的域名解析将返回真实ip)
+    - "*.lan"
+    - "*.local"
+    - "*.home"
+    - "*.arpa"
+    - rule-set:China
+    - rule-set:Private
+
+# =========================================
 #                 流量嗅探
 # =========================================
 sniffer:
@@ -124,27 +145,6 @@ sniffer:
 # ══ hosts配置 ══ 谷歌商店  解决无法下载的问题
 hosts:
   'services.googleapis.cn': ['services.googleapis.com']
-
-# =========================================
-#                 DNS 配置
-# =========================================
-dns:
-  enable:                           true                                                                                        # 启用 DNS 功能 
-  ipv6:                             true                                                                                        # 支持 IPv6
-  enhanced-mode:                    fake-ip                                                                                     # 启用 Fake-IP
-  fake-ip-range:                    198.18.0.1/16                                                                               # IPv4 Fake-IP 网段
-  listen:                           0.0.0.0:1053                                                                                # DNS 监听地址和端口
-  respect-rules:                    false                                                                                       # 是否遵循DNS规则
-  fake-ip-filter-mode:              blacklist                                                                                   # Fake-IP 黑名单
-  nameserver: [https://doh.pub/dns-query, https://dns.alidns.com/dns-query]                                                     # DNS 上游服务器（用于国内域名解析）
-  default-nameserver: [https://223.5.5.5/dns-query, tls://1.1.1.1:853]                                                          # 默认DNS服务器 （用于解析上游Doh和兜底解析）
-  fake-ip-filter:                                                                                                               # fake-ip 黑名单列表 (列表内的域名解析将返回真实ip)
-    - "*.lan"
-    - "*.local"
-    - "*.home"
-    - "*.arpa"
-    - rule-set:China
-    - rule-set:Private
 
 # =========================================
 #             策略组配置
