@@ -256,8 +256,8 @@ geo-update-interval: 24
 tun:
   # 启用 TUN 功能，用于透明代理
   enable: true
-  # 使用混合协议栈（支持 TCP + UDP）
-  stack: mixed
+  # 使用系统协议栈（性能最佳）
+  stack: system
   # TUN 虚拟网卡名称，可自定义
   device: mihomo
   # DNS 劫持设置
