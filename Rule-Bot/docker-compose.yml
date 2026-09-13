@@ -1,0 +1,7 @@
+services:
+  clash-bot:
+    image: brightmoonhouse/clash-rule-bot:latest
+    container_name: clash-rule-bot
+    restart: unless-stopped
+    env_file:
+      - .env
