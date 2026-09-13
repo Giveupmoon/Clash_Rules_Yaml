@@ -26,6 +26,7 @@
 ├── Icon/                           # 策略组与分类图标资源
 │   ├── HOMOMIX/                    # 彩色应用与国家/地区图标
 │   └── IconResource/               # 高清矢量/应用大图标
+├── Rule-Bot/                       # Telegram远程规则管理机器人
 ├── Start.yaml                      # Clash / Nikki 完整主配置文件
 ├── Clash-auto-update-nikki.sh      # 自动内核更新脚本
 ├── My-config.yaml                  # 个人配置

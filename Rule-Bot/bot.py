@@ -159,11 +159,6 @@ def get_full_rule_path(filename: str) -> str:
 
 
 def parse_raw_rule_lines(text: str) -> list[str]:
-    """
-    按行解析出带注释的原始规则条目，保证形如:
-    - 'DOMAIN-SUFFIX,google.com' # 谷歌
-    解析为: 'DOMAIN-SUFFIX,google.com' # 谷歌
-    """
     lines = text.splitlines()
     entries = []
     for line in lines:
@@ -184,11 +179,6 @@ def fetch_rule_file(filename: str):
 
 
 def commit_rule_file(file_content, payload_list: list, commit_msg: str):
-    """
-    序列化时确保注释紧随引号之后：
-    payload:
-      - 'RULE' # 备注
-    """
     if not payload_list:
         updated_text = "payload:\n"
     else:
@@ -214,7 +204,6 @@ def commit_rule_file(file_content, payload_list: list, commit_msg: str):
 
 
 def extract_pure_rule(entry: str) -> str:
-    """提取纯规则主体用于比对和检索"""
     rule_part = entry.split("#")[0]
     return rule_part.strip().strip("'\"")
 
@@ -372,7 +361,6 @@ async def handle_incoming_text(update: Update, context: ContextTypes.DEFAULT_TYP
         context.user_data.clear()
         return
 
-    # --- 分支 B：常规流程（发送域名或 IP） ---
     target_val = clean_input(raw_text)
     if not target_val:
         await update.message.reply_text("⚠️ 未识别到有效内容，请重新发送。")
@@ -434,7 +422,6 @@ async def handle_button(update: Update, context: ContextTypes.DEFAULT_TYPE):
     msg_id = query.message.message_id
     context.user_data["panel_msg_id"] = msg_id
 
-    # 1. 取消操作
     if data == "act_cancel":
         cancel_user_timer(user_id, context)
         context.user_data.clear()
@@ -455,7 +442,6 @@ async def handle_button(update: Update, context: ContextTypes.DEFAULT_TYPE):
         )
         return
 
-    # 2. 引导与纯展示菜单
     if data == "start_guide_add":
         cancel_user_timer(user_id, context)
         cancel_kb = InlineKeyboardMarkup([[InlineKeyboardButton("⬅️ 返回主面板", callback_data="act_cancel")]])
@@ -495,7 +481,6 @@ async def handle_button(update: Update, context: ContextTypes.DEFAULT_TYPE):
         await query.edit_message_text(get_help_text(), reply_markup=back_kb, parse_mode="Markdown")
         return
 
-    # 3. 删除操作
     if data == "act_del_from_exist":
         reset_user_timer(user_id, chat_id, msg_id, context)
         matches = context.user_data.get("matches", [])
@@ -590,7 +575,6 @@ async def handle_button(update: Update, context: ContextTypes.DEFAULT_TYPE):
             await query.edit_message_text(f"❌ 删除失败：`{str(e)}`", parse_mode="Markdown")
         return
 
-    # 4. 选择写入文件
     if data.startswith("add_to_"):
         target_fkey = data.replace("add_to_", "")
         filename = FILE_KEY_TO_NAME.get(target_fkey)
@@ -636,7 +620,6 @@ async def handle_button(update: Update, context: ContextTypes.DEFAULT_TYPE):
         )
         return
 
-    # 5. 格式确认后要求输入备注
     if data.startswith("final_add_"):
         reset_user_timer(user_id, chat_id, msg_id, context)
         rule_type = data.replace("final_add_", "")
@@ -664,7 +647,6 @@ async def handle_button(update: Update, context: ContextTypes.DEFAULT_TYPE):
         )
         return
 
-    # 6. 单独查看指定文件
     if data.startswith("do_view_"):
         cancel_user_timer(user_id, context)
         target_fkey = data.replace("do_view_", "")
