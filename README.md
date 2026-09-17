@@ -21,11 +21,8 @@
 ```text
 .
 ├── Rules/                          # 私人规则
-│   ├── Giveup_Direct/              # 直连规则
-│   └── Giveup_Proxy/               # 代理规则
 ├── Icon/                           # 策略组与分类图标资源
-│   ├── HOMOMIX/                    # 彩色应用与国家/地区图标
-│   └── IconResource/               # 高清矢量/应用大图标
+├── scripts/                        # 相关实用脚本
 ├── Rule-Bot/                       # Telegram远程规则管理机器人
 ├── Start.yaml                      # Clash / Nikki 完整主配置文件
 ├── Clash-auto-update-nikki.sh      # 自动内核更新脚本
