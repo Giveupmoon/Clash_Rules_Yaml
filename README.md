@@ -23,9 +23,7 @@
 ├── Rules/                          # 私人规则
 ├── Icon/                           # 策略组与分类图标资源
 ├── scripts/                        # 相关实用脚本
-├── Rule-Bot/                       # Telegram远程规则管理机器人
 ├── Start.yaml                      # Clash / Nikki 完整主配置文件
-├── Clash-auto-update-nikki.sh      # 自动内核更新脚本
 ├── My-config.yaml                  # 个人配置
 └── README.md
 

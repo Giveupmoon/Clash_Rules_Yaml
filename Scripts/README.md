@@ -9,5 +9,5 @@
 | 模块名称 | 说明 | 适用环境 | 快速入口 |
 | :--- | :--- | :--- | :--- |
 | **Mihomo 内核管理** | 自动更新代理内核 | OpenWrt (Nikki / OpenClash) / 通用 Linux | [查看文档 ➔](./Auto_Update_For_Mihomo/README.md) |
-
+| **Rule-Bot** | 自动规则管理 | Python/docker | [查看文档 ➔](./Rule-Bot/README.md) |
 ---

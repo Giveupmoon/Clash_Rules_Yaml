@@ -5,8 +5,8 @@ on:
     branches:
       - main
     paths:
-      - 'Rule-Bot/**'
-      - '!Rule-Bot/README.md'
+      - 'Scripts/Rule-Bot/**'
+      - '!Scripts/Rule-Bot/README.md'
   workflow_dispatch:
 
 jobs:

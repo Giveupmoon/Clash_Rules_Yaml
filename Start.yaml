@@ -178,11 +178,11 @@ port: 7890
 # SOCKS 代理端口
 socks-port: 7891
 # 混合端口
-mixed-port: 7893
+mixed-port: 10801
 # Redir 透明代理端口
 redir-port: 7892
 # TProxy 端口
-tproxy-port: 7894
+tproxy-port: 7893
 # 允许局域网访问
 allow-lan: true
 # 监听所有网卡
@@ -258,8 +258,6 @@ tun:
   enable: true
   # 使用系统协议栈（性能最佳）
   stack: system
-  # TUN 虚拟网卡名称，可自定义
-  device: mihomo
   # DNS 劫持设置
   dns-hijack:
     - "any:53"
@@ -288,6 +286,8 @@ dns:
   enhanced-mode: fake-ip
   # IPv4 Fake-IP 网段
   fake-ip-range: 198.18.0.1/16
+  # IPv6 Fake-IP 网段
+  fake-ip-range6: fdfe:dcba:9876::1/64
   # DNS 监听地址和端口
   listen: 0.0.0.0:1053
   # 是否遵循DNS规则
@@ -304,12 +304,7 @@ dns:
     - tls://1.1.1.1:853
   # fake-ip 黑名单列表 (列表内的域名解析将返回真实ip)
   fake-ip-filter:
-    - "*.lan"
-    - "*.local"
-    - "*.home"
-    - "*.arpa"
     - rule-set:China
-    - rule-set:Private
 
 # =========================================
 #                 流量嗅探

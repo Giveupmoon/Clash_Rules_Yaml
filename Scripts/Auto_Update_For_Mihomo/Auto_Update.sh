@@ -1,7 +1,8 @@
 #!/bin/sh
 
 # ==================== 基础配置区域 ====================
-REPO_OWNER="MetaCubeX"
+OFFICIAL_REPO_OWNER="MetaCubeX"
+SMART_REPO_OWNER="vernesong"
 REPO_NAME="mihomo"
 TMP_DIR="/tmp/mihomo_update"
 
@@ -21,9 +22,14 @@ show_help() {
       --nikki           指定更新 Nikki 核心 (/usr/bin/mihomo)
       --openclash       指定更新 OpenClash Meta 核心 (/etc/openclash/core/clash_meta)
 
+内核来源 (Flavor) 选项:
+      --official        指定使用 MetaCubeX 官方源
+      --smart           指定使用 vernesong 优化源 (Smart 内核)
+  -t, --toggle-flavor   来源互切 (官方 Alpha <-> Smart Alpha, 官方 Release <-> Smart Release)
+
 通道与更新选项:
-  (无参数)              跟随当前核心通道自动更新
-  -s, --switch          反转通道 (Release <-> Alpha 互切)
+  (无参数)              跟随当前核心类型与通道自动检查更新
+  -s, --switch          通道反转切换 (Release <-> Alpha 互切，保持当前来源)
       --alpha           强制安装/更新至最新 Alpha 预发布版本
       --release         强制安装/更新至最新 Release 稳定版本
       --stable          同 --release
@@ -34,6 +40,7 @@ EOF
 # ==================== 1. 参数解析 ====================
 OP_MODE="default"
 TARGET_APP=""
+FLAVOR_MODE="default"
 
 while [ $# -gt 0 ]; do
     case "$1" in
@@ -47,6 +54,18 @@ while [ $# -gt 0 ]; do
             ;;
         --release|--stable)
             OP_MODE="stable"
+            shift
+            ;;
+        -t|--toggle-flavor)
+            FLAVOR_MODE="toggle"
+            shift
+            ;;
+        --smart)
+            FLAVOR_MODE="smart"
+            shift
+            ;;
+        --official)
+            FLAVOR_MODE="official"
             shift
             ;;
         --nikki)
@@ -71,7 +90,6 @@ done
 
 # ==================== 2. 动态环境检测逻辑 ====================
 detect_environment() {
-    # 1. 用户显式指定目标
     if [ "$TARGET_APP" = "nikki" ]; then
         ENV_TYPE="nikki"
         LOCAL_BIN_PATH="/usr/bin/mihomo"
@@ -86,7 +104,6 @@ detect_environment() {
         return
     fi
 
-    # 2. 检查两者是否同时安装
     HAS_NIKKI=0
     HAS_OPENCLASH=0
     [ -f "/etc/init.d/nikki" ] && HAS_NIKKI=1
@@ -114,7 +131,6 @@ detect_environment() {
         return
     fi
 
-    # 3. 单独安装或通用 Linux 环境判定
     if [ $HAS_NIKKI -eq 1 ]; then
         ENV_TYPE="nikki"
         LOCAL_BIN_PATH="/usr/bin/mihomo"
@@ -167,7 +183,7 @@ case "$ARCH" in
 esac
 echo "检测到架构: $ARCH -> $PLATFORM"
 
-# ==================== 检测 CPU 指令集级别（仅 x86_64） ====================
+# 检测 CPU 指令集级别（仅 x86_64）
 detect_cpu_level() {
     if [ "$PLATFORM" != "amd64" ]; then
         echo "none"
@@ -202,20 +218,32 @@ if [ -n "$GITHUB_TOKEN" ]; then
     echo "使用 GitHub Token 认证访问 API"
 else
     AUTH_HEADER=""
-    echo "警告: 未设置 GitHub Token，API 请求可能受限流影响"
+    echo "提示: 未设置 GitHub Token，API 请求可能受限流影响"
 fi
 
-# ==================== 3. 检测本地版本与目标通道 ====================
+# ==================== 3. 检测本地版本、类型与确定目标 ====================
 if [ ! -f "$LOCAL_BIN_PATH" ]; then
     echo "提示: 本地未找到核心文件 ($LOCAL_BIN_PATH)，判定为全新安装"
     LOCAL_RAW_INFO=""
     LOCAL_VERSION="none"
     CURRENT_CHANNEL="stable"
+    CURRENT_FLAVOR="official"
 else
     LOCAL_RAW_INFO=$($LOCAL_BIN_PATH -v 2>/dev/null | head -n1)
+    
+    # 判定当前来源是 Smart 还是 Official
+    if echo "$LOCAL_RAW_INFO" | grep -qiE "smart|vernesong"; then
+        CURRENT_FLAVOR="smart"
+    else
+        CURRENT_FLAVOR="official"
+    fi
+
+    # 判定当前通道与版本号
     if echo "$LOCAL_RAW_INFO" | grep -qi "alpha"; then
         CURRENT_CHANNEL="alpha"
-        LOCAL_VERSION=$(echo "$LOCAL_RAW_INFO" | grep -oE 'alpha-[a-z0-9]+')
+        # 兼容匹配 alpha-smart-xxxx 或 alpha-xxxx
+        LOCAL_VERSION=$(echo "$LOCAL_RAW_INFO" | grep -oE 'alpha(-smart)?-[a-z0-9]+')
+        [ -z "$LOCAL_VERSION" ] && LOCAL_VERSION=$(echo "$LOCAL_RAW_INFO" | grep -oE '[a-z0-9]{7,8}')
     else
         CURRENT_CHANNEL="stable"
         LOCAL_VERSION=$(echo "$LOCAL_RAW_INFO" | grep -oE 'v[0-9]+\.[0-9]+\.[0-9]+')
@@ -223,9 +251,40 @@ else
     [ -z "$LOCAL_VERSION" ] && LOCAL_VERSION="unknown"
 fi
 
-echo "本地当前版本: $LOCAL_VERSION (通道: $CURRENT_CHANNEL)"
+echo "本地当前状态: 来源[$CURRENT_FLAVOR] | 通道[$CURRENT_CHANNEL] | 版本[$LOCAL_VERSION]"
 
-# 映射目标更新通道
+# 1. 确定目标内核来源 (Flavor)
+case "$FLAVOR_MODE" in
+    toggle)
+        if [ "$CURRENT_FLAVOR" = "smart" ]; then
+            TARGET_FLAVOR="official"
+        else
+            TARGET_FLAVOR="smart"
+        fi
+        echo ">> 运行动作: 切换内核来源 ($CURRENT_FLAVOR -> $TARGET_FLAVOR)"
+        ;;
+    smart)
+        TARGET_FLAVOR="smart"
+        echo ">> 运行动作: 锁定内核来源为 Smart"
+        ;;
+    official)
+        TARGET_FLAVOR="official"
+        echo ">> 运行动作: 锁定内核来源为 Official"
+        ;;
+    default)
+        TARGET_FLAVOR="$CURRENT_FLAVOR"
+        echo ">> 运行动作: 保持当前内核来源 ($TARGET_FLAVOR)"
+        ;;
+esac
+
+# 2. 映射目标仓库 Owner
+if [ "$TARGET_FLAVOR" = "smart" ]; then
+    REPO_OWNER="$SMART_REPO_OWNER"
+else
+    REPO_OWNER="$OFFICIAL_REPO_OWNER"
+fi
+
+# 3. 确定目标更新通道 (Channel)
 case "$OP_MODE" in
     switch)
         if [ "$CURRENT_CHANNEL" = "alpha" ]; then
@@ -233,31 +292,33 @@ case "$OP_MODE" in
         else
             TARGET_CHANNEL="alpha"
         fi
-        echo ">> 运行模式: 通道反转切换 ($CURRENT_CHANNEL -> $TARGET_CHANNEL)"
+        echo ">> 通道设置: 反转切换 ($CURRENT_CHANNEL -> $TARGET_CHANNEL)"
         ;;
     alpha)
         TARGET_CHANNEL="alpha"
-        echo ">> 运行模式: 目标锁定为 Alpha"
+        echo ">> 通道设置: 强制锁定 Alpha"
         ;;
     stable)
         TARGET_CHANNEL="stable"
-        echo ">> 运行模式: 目标锁定为 Release (Stable)"
+        echo ">> 通道设置: 强制锁定 Stable"
         ;;
     default)
         TARGET_CHANNEL="$CURRENT_CHANNEL"
-        echo ">> 运行模式: 默认跟随本地通道 ($TARGET_CHANNEL)"
+        echo ">> 通道设置: 严格继承当前通道 ($TARGET_CHANNEL)"
         ;;
 esac
+
+echo ">> 目标定位: $REPO_OWNER ($TARGET_FLAVOR) -> 通道: $TARGET_CHANNEL"
 
 # ==================== 4. 获取远端 Release 信息 ====================
 mkdir -p "$TMP_DIR"
 API_JSON_FILE="$TMP_DIR/release_info.json"
 
 if [ "$TARGET_CHANNEL" = "alpha" ]; then
-    echo "正在获取 Alpha 预发布版本信息..."
+    echo "正在获取 $REPO_OWNER/$REPO_NAME 的 Alpha 预发布版本信息..."
     API_URL="https://api.github.com/repos/$REPO_OWNER/$REPO_NAME/releases/tags/Prerelease-Alpha"
 else
-    echo "正在获取最新稳定版 Release 信息..."
+    echo "正在获取 $REPO_OWNER/$REPO_NAME 的最新稳定版 Release 信息..."
     API_URL="https://api.github.com/repos/$REPO_OWNER/$REPO_NAME/releases/latest"
 fi
 
@@ -268,7 +329,7 @@ else
 fi
 
 if [ ! -s "$API_JSON_FILE" ] || grep -q '"message": "Not Found"' "$API_JSON_FILE"; then
-    echo "错误: 无法从 GitHub API 获取发布信息"
+    echo "错误: 无法从 GitHub API 获取发布信息 (URL: $API_URL)"
     rm -rf "$TMP_DIR"
     exit 1
 fi
@@ -278,53 +339,79 @@ DOWNLOADED_LEVEL=""
 TARGET_FILE=""
 
 # ==================== 5. 匹配并下载资源 ====================
+ASSETS_URLS=$(grep -oE '"browser_download_url": "[^"]*' "$API_JSON_FILE" | cut -d'"' -f4)
+
 if [ "$PLATFORM" = "amd64" ]; then
     case "$CPU_LEVEL" in
-        v3) LEVEL_LIST="v3 v2 v1" ;;
-        v2) LEVEL_LIST="v2 v1" ;;
-        *)  LEVEL_LIST="v1" ;;
+        v3) LEVEL_LIST="v3 generic" ;;
+        v2) LEVEL_LIST="v2 generic" ;;
+        *)  LEVEL_LIST="generic" ;;
     esac
 else
     LEVEL_LIST="generic"
 fi
 
 for level in $LEVEL_LIST; do
-    if [ "$TARGET_CHANNEL" = "alpha" ]; then
-        if [ "$level" = "generic" ]; then
-            SEARCH_PATTERN="mihomo-linux-$PLATFORM-alpha-[a-z0-9]+\.gz"
+    MATCHED_ASSET=""
+
+    if [ "$TARGET_FLAVOR" = "smart" ]; then
+        # vernesong/mihomo 包名格式：
+        # Alpha:  mihomo-linux-amd64-v3-alpha-smart-xxxx.gz 或 mihomo-linux-amd64-alpha-smart-xxxx.gz
+        # Release: mihomo-linux-amd64-v3-smart-xxxx.gz 或 mihomo-linux-amd64-smart-xxxx.gz 或标准 release 命名
+        if [ "$TARGET_CHANNEL" = "alpha" ]; then
+            if [ "$level" = "generic" ]; then
+                MATCHED_ASSET=$(echo "$ASSETS_URLS" | grep -E "mihomo-linux-$PLATFORM-alpha-smart-[a-z0-9]+\.gz$" | head -n1)
+            else
+                MATCHED_ASSET=$(echo "$ASSETS_URLS" | grep -E "mihomo-linux-$PLATFORM-$level-alpha-smart-[a-z0-9]+\.gz$" | head -n1)
+            fi
         else
-            SEARCH_PATTERN="mihomo-linux-$PLATFORM-$level-alpha-[a-z0-9]+\.gz"
+            if [ "$level" = "generic" ]; then
+                MATCHED_ASSET=$(echo "$ASSETS_URLS" | grep -E "mihomo-linux-$PLATFORM(-smart)?-v?[0-9].*\.gz$" | head -n1)
+            else
+                MATCHED_ASSET=$(echo "$ASSETS_URLS" | grep -E "mihomo-linux-$PLATFORM-$level(-smart)?-v?[0-9].*\.gz$" | head -n1)
+            fi
         fi
     else
-        if [ "$level" = "generic" ]; then
-            SEARCH_PATTERN="mihomo-linux-$PLATFORM-v[0-9]+\.[0-9]+\.[0-9]+\.gz"
+        # MetaCubeX/mihomo 官方包名格式：
+        # Alpha:   mihomo-linux-amd64-v3-alpha-xxxx.gz
+        # Release: mihomo-linux-amd64-v3-v1.18.0.gz
+        if [ "$TARGET_CHANNEL" = "alpha" ]; then
+            if [ "$level" = "generic" ]; then
+                MATCHED_ASSET=$(echo "$ASSETS_URLS" | grep -E "mihomo-linux-$PLATFORM-alpha-[a-z0-9]+\.gz$" | head -n1)
+            else
+                MATCHED_ASSET=$(echo "$ASSETS_URLS" | grep -E "mihomo-linux-$PLATFORM-$level-alpha-[a-z0-9]+\.gz$" | head -n1)
+            fi
         else
-            SEARCH_PATTERN="mihomo-linux-$PLATFORM-$level-v[0-9]+\.[0-9]+\.[0-9]+\.gz"
+            if [ "$level" = "generic" ]; then
+                MATCHED_ASSET=$(echo "$ASSETS_URLS" | grep -E "mihomo-linux-$PLATFORM-v[0-9]+\.[0-9]+\.[0-9]+\.gz$" | head -n1)
+            else
+                MATCHED_ASSET=$(echo "$ASSETS_URLS" | grep -E "mihomo-linux-$PLATFORM-$level-v[0-9]+\.[0-9]+\.[0-9]+\.gz$" | head -n1)
+            fi
         fi
     fi
-
-    MATCHED_ASSET=$(grep -oE '"browser_download_url": "[^"]*' "$API_JSON_FILE" | cut -d'"' -f4 | grep -E "$SEARCH_PATTERN" | head -n1)
 
     if [ -n "$MATCHED_ASSET" ]; then
         FILE_NAME=$(basename "$MATCHED_ASSET")
         echo "匹配到目标资源: $FILE_NAME"
 
-        if [ "$TARGET_CHANNEL" = "alpha" ]; then
-            REMOTE_VERSION=$(echo "$FILE_NAME" | grep -oE 'alpha-[a-z0-9]+')
-        else
+        # 提取远端版本特征
+        if echo "$FILE_NAME" | grep -qE 'alpha(-smart)?-[a-z0-9]+'; then
+            REMOTE_VERSION=$(echo "$FILE_NAME" | grep -oE 'alpha(-smart)?-[a-z0-9]+')
+        elif echo "$FILE_NAME" | grep -qE 'v[0-9]+\.[0-9]+\.[0-9]+'; then
             REMOTE_VERSION=$(echo "$FILE_NAME" | grep -oE 'v[0-9]+\.[0-9]+\.[0-9]+')
+        else
+            REMOTE_VERSION="latest"
         fi
+        echo "远端最新版本特征: $REMOTE_VERSION"
 
-        echo "远端最新版本: $REMOTE_VERSION"
-
-        # 未切换通道且版本一致跳过
-        if [ "$CURRENT_CHANNEL" = "$TARGET_CHANNEL" ] && [ "$LOCAL_VERSION" = "$REMOTE_VERSION" ]; then
+        # 仅同源、同通道且版本字符完全相同时跳过
+        if [ "$CURRENT_FLAVOR" = "$TARGET_FLAVOR" ] && [ "$CURRENT_CHANNEL" = "$TARGET_CHANNEL" ] && [ "$LOCAL_VERSION" = "$REMOTE_VERSION" ] && [ "$REMOTE_VERSION" != "latest" ]; then
             echo "本地已是最新版本 ($LOCAL_VERSION)，无需重复更新。"
             rm -rf "$TMP_DIR"
             exit 0
         fi
 
-        echo "开始下载 $FILE_NAME..."
+        echo "开始下载 $FILE_NAME (来源: $REPO_OWNER)..."
         if curl -L --fail --progress-bar -o "$TMP_DIR/$FILE_NAME" "$MATCHED_ASSET"; then
             DOWNLOAD_SUCCESS=1
             DOWNLOADED_LEVEL="$level"
@@ -343,16 +430,25 @@ if [ $DOWNLOAD_SUCCESS -eq 0 ]; then
 fi
 
 # ==================== 6. 解压与校验 ====================
-gunzip -f "$TMP_DIR/$TARGET_FILE"
-UNPACKED_NAME="${TARGET_FILE%.gz}"
+echo "正在解压 $TARGET_FILE..."
+cd "$TMP_DIR"
 
-if [ ! -f "$TMP_DIR/$UNPACKED_NAME" ]; then
-    echo "错误: 解压未生成目标文件"
+if echo "$TARGET_FILE" | grep -qE '\.tar\.gz$'; then
+    tar -zxvf "$TARGET_FILE" >/dev/null 2>&1
+    EXTRACTED_BIN=$(find . -maxdepth 2 -type f -name "mihomo*" ! -name "*.tar.gz" ! -name "*.gz" | head -n1)
+    [ -n "$EXTRACTED_BIN" ] && mv "$EXTRACTED_BIN" "$TMP_DIR/mihomo"
+elif echo "$TARGET_FILE" | grep -qE '\.gz$'; then
+    gunzip -f "$TARGET_FILE"
+    UNPACKED_NAME="${TARGET_FILE%.gz}"
+    [ -f "$UNPACKED_NAME" ] && mv "$UNPACKED_NAME" "$TMP_DIR/mihomo"
+fi
+
+if [ ! -f "$TMP_DIR/mihomo" ]; then
+    echo "错误: 解压未生成可执行文件"
     rm -rf "$TMP_DIR"
     exit 1
 fi
 
-mv "$TMP_DIR/$UNPACKED_NAME" "$TMP_DIR/mihomo"
 chmod +x "$TMP_DIR/mihomo"
 
 if ! "$TMP_DIR/mihomo" -v >/dev/null 2>&1; then
@@ -413,7 +509,8 @@ echo "=========================================="
 echo "执行完成！"
 echo "部署环境: $ENV_TYPE"
 echo "核心路径: $LOCAL_BIN_PATH"
-echo "原通道版本: $CURRENT_CHANNEL ($LOCAL_VERSION)"
+echo "变更前: $CURRENT_FLAVOR | $CURRENT_CHANNEL ($LOCAL_VERSION)"
+echo "变更后: $TARGET_FLAVOR | $TARGET_CHANNEL"
 echo "当前核心信息: $NEW_VERSION"
-echo "采用指令集: $DOWNLOADED_LEVEL"
+echo "采用级别: $DOWNLOADED_LEVEL"
 echo "=========================================="
