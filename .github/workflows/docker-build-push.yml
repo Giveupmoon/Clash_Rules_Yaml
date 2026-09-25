@@ -32,8 +32,8 @@ jobs:
       - name: Build and Push Docker Image
         uses: docker/build-push-action@v5
         with:
-          context: ./Rule-Bot
-          file: ./Rule-Bot/Dockerfile
+          context: .Scripts/Rule-Bot
+          file: .Scripts/Rule-Bot/Dockerfile
           platforms: linux/amd64,linux/arm64
           push: true
           tags: |
