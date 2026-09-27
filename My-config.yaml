@@ -159,7 +159,7 @@ anchor:
     type: http
     interval: 86400
     behavior: classical
-    format: text
+    format: yaml
 
 # =========================================
 #               代理提供商
@@ -489,6 +489,8 @@ proxy-groups:
 # =========================================
 rules:
   - AND,((NETWORK,UDP),(DST-PORT,443),(NOT,((OR,((RULE-SET,China),(RULE-SET,China-IP,no-resolve)))))),REJECT
+  - RULE-SET,Giveup-Direct,全球直连
+  - RuLE-SET,Giveup-Proxy,手动选择
   - RULE-SET,Private,全球直连
   - RULE-SET,Private-IP,全球直连,no-resolve
   - RULE-SET,Custom_Direct_Domain,全球直连
@@ -764,3 +766,13 @@ rule-providers:
     <<: *ip
     url: "https://raw.githubusercontent.com/MetaCubeX/meta-rules-dat/meta/geo/geoip/cn.mrs"
     path: ./rules/China-IP.mrs
+
+  Giveup-Direct:
+    <<: *class
+    url: "https://raw.githubusercontent.com/Giveupmoon/Clash_Rules_Yaml/main/Rules/Giveup_Direct.yaml"
+    path: ./rules/Giveup-Direct.yaml
+
+  Giveup-Proxy:
+    <<: *class
+    url: "https://raw.githubusercontent.com/Giveupmoon/Clash_Rules_Yaml/main/Rules/Giveup_Proxy.yaml"
+    path: ./rules/Giveup-Proxy.yaml
