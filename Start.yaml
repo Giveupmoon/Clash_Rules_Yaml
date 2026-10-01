@@ -159,7 +159,7 @@ anchor:
     type: http
     interval: 86400
     behavior: classical
-    format: text
+    format: yaml
 
 # =========================================
 #               代理提供商
@@ -256,8 +256,10 @@ geo-update-interval: 24
 tun:
   # 启用 TUN 功能，用于透明代理
   enable: true
-  # 使用系统协议栈（性能最佳）
-  stack: system
+  # tun 栈类型
+  stack: mips
+  # TUN 虚拟网卡名称，可自定义
+  device: mihomo
   # DNS 劫持设置
   dns-hijack:
     - "any:53"
@@ -302,7 +304,12 @@ dns:
     - tls://1.1.1.1:853
   # fake-ip 黑名单列表 (列表内的域名解析将返回真实ip)
   fake-ip-filter:
+    - "*.lan"
+    - "*.local"
+    - "*.home"
+    - "*.arpa"
     - rule-set:China
+    - rule-set:Private
 
 # =========================================
 #                 流量嗅探
