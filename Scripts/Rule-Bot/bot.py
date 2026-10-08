@@ -2,6 +2,7 @@ import os
 import re
 import ipaddress
 import logging
+import time
 from pathlib import Path
 from functools import wraps
 import yaml
@@ -65,6 +66,8 @@ if not REPO_NAME:
 auth = Auth.Token(GITHUB_TOKEN)
 gh = Github(auth=auth)
 repo = gh.get_repo(REPO_NAME)
+
+PROCESSED_MESSAGES = {}
 
 
 def get_file_display_name(fname: str) -> str:
@@ -321,10 +324,25 @@ async def view_cmd(update: Update, context: ContextTypes.DEFAULT_TYPE):
 
 @auth_required
 async def handle_incoming_text(update: Update, context: ContextTypes.DEFAULT_TYPE):
+    if not update.message or not update.message.text:
+        return
+
     user_id = update.effective_user.id
+    chat_id = update.effective_chat.id
+    message_id = update.message.message_id
+
+    msg_key = f"{chat_id}_{message_id}"
+    now = time.time()
+    if msg_key in PROCESSED_MESSAGES and now - PROCESSED_MESSAGES[msg_key] < 3:
+        return
+    PROCESSED_MESSAGES[msg_key] = now
+
+    for k, t in list(PROCESSED_MESSAGES.items()):
+        if now - t > 10:
+            PROCESSED_MESSAGES.pop(k, None)
+
     raw_text = update.message.text.strip()
 
-    # --- 分支 A：用户输入备注 ---
     if context.user_data.get("awaiting_comment"):
         cancel_user_timer(user_id, context)
         final_rule_base = context.user_data.get("pending_rule")
@@ -334,7 +352,6 @@ async def handle_incoming_text(update: Update, context: ContextTypes.DEFAULT_TYP
         if not clean_comment:
             clean_comment = "未备注"
 
-        # 构造带有注释标记的条目：'RULE' # 备注
         final_entry = f"'{final_rule_base}' # {clean_comment}"
 
         status_tip = await update.message.reply_text(
@@ -551,7 +568,6 @@ async def handle_button(update: Update, context: ContextTypes.DEFAULT_TYPE):
         await query.edit_message_text(f"⏳ 正在从 `{filename}` 移除规则...", parse_mode="Markdown")
         try:
             file_content, payload = fetch_rule_file(filename)
-            # 按原始行或纯规则部分精确比对
             matched_index = None
             for i, p in enumerate(payload):
                 if p == target_rule or extract_pure_rule(p) == extract_pure_rule(target_rule):
