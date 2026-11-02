@@ -187,6 +187,7 @@ proxy-groups:
 #                 规则配置
 # =========================================
 rules:
+  - AND,((NETWORK,UDP),(DST-PORT,443),(NOT,((RULE-SET,China))),(NOT,((RULE-SET,China-IP,no-resolve)))),REJECT
   - RULE-SET,Private,全球直连
   - RULE-SET,Private-IP,全球直连,no-resolve
   - RULE-SET,Custom_Direct_Domain,全球直连
